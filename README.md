@@ -24,7 +24,7 @@ of the screen. This will open the git bottom bar, where you can see lots of info
 branch (under the `local` drop-down), click `push`, then `push` again, and now your branch is visible to everyone in the team!
 
 The basic development workflow will be like this:
-1. Right click your branch in the git bottom bar and click `update`. Make a habit of doing this very very often! Otherwise, your code will not be up to date with the main branch
+1. Right click origin/main and click `pull into branch <your-name> using merge`. Make a habit of doing this very very often! Otherwise, your code will not be up to date with the main branch
    and horrible things can happen.
 2. Make changes to the code (keep to your section of the code, don't encroach on other people's code, lest we have to deal with some awful merge conflicts later!)
 3. Make commits as often as you like to save your progress.
@@ -38,4 +38,4 @@ The basic development workflow will be like this:
 
 I will also take this opportunity to say:
 **No AI code.** You can consult AI for help if you want to, but all the code you push should be hand-written (and not copied from AI, of course). I will not accept any pull requests with 
-AI-generated code.
+AI-generated code. It is quite easy to tell.
