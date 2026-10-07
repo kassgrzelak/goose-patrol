@@ -8,8 +8,10 @@ Look around on your favorite search engine to find information on how to use Lib
 I recommend using the Java IDE `IntelliJ Idea` as it is very powerful, very intuitive, and it's very easy to import this project into it.
 
 If you are using IntelliJ, open it to get to the welcome screen, select "clone repository", select GitHub from the sidebar (not GitHub Enterprise), 
-log in with your GitHub account, at which point you should be able to select `goose-patrol` from the list, then click `clone` and (after a lengthy importing process)
-everything should just work! Go to `lwjgl3/src/main/java/io/github/goosePatrol/lwjgl3/Lwjgl3Launcher.java`, open the file, and click the big green play button in the
+log in with your GitHub account, at which point you should be able to select `goose-patrol` from the list, then click `clone`.
+After a lengthy importing process, the IDE will probably complain at you about not having JDK 17 installed. Click `setup JDK` in this banner, select version 17,
+then click `download JDK`. Once that's done, you should be able to proceed.
+Go to `lwjgl3/src/main/java/io/github/goosePatrol/lwjgl3/Lwjgl3Launcher.java`, open the file, and click the big green play button in the
 top right to make sure everything works.
 
 Now, go to the top of the screen, where you should see a weird, vaguely branch-looking icon and the word `main`. Click on this drop-down and, if your development branch
