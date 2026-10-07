@@ -8,6 +8,7 @@ import io.github.goosePatrol.Main;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+
         createApplication();
     }
 
