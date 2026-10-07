@@ -2,7 +2,7 @@
 ## How to use LibGDX
 Look around on your favorite search engine to find information on how to use LibGDX (the game engine we're using), here are some places to start:
 - Tutorials endorsed by LibGDX: https://libgdx.com/wiki/start/demos-and-tutorials
-- A simple tutorial aimed at people who have never done game development: https://colourtann.github7.io/HelloLibgdx/
+- A simple tutorial aimed at people who have never done game development: https://colourtann.github.io/HelloLibgdx/
 
 ## How we will work on code as a team
 I recommend using the Java IDE `IntelliJ Idea` as it is very powerful, very intuitive, and it's very easy to import this project into it.
