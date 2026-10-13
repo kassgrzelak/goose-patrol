@@ -27,7 +27,8 @@ public class MainMenuScreen implements Screen {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         game.batch.begin();
-        game.font.draw(game.batch, "Main menu", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, 0, Align.center, false);
+        game.font.draw(game.batch, "Main menu", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f,
+                0, Align.center, false);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
