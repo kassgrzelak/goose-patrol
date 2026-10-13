@@ -1,16 +1,8 @@
 package io.github.goosePatrol;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Main extends Game {
     public SpriteBatch batch;
@@ -19,7 +11,7 @@ public class Main extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        font = new BitmapFont(); // Uses default LibGDX font.
+        font = new BitmapFont();
 
         setScreen(new MainMenuScreen(this));
     }

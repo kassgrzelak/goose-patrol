@@ -1,13 +1,11 @@
 package io.github.goosePatrol;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class MainMenuScreen implements Screen {
+public class MainMenuScreen extends GameScreen {
     private final Main game;
 
     private final ScreenViewport viewport;
@@ -23,18 +21,21 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK);
-        viewport.apply();
-        game.batch.begin();
-        game.font.draw(game.batch, "Main menu", Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f,
-                0, Align.center, false);
-        game.batch.end();
-
+    protected void update(float delta)
+    {
         if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new GoosePatrolScreen(game));
             dispose();
         }
+    }
+
+    @Override
+    protected void draw()
+    {
+        ScreenUtils.clear(Color.BLACK);
+        viewport.apply();
+
+
     }
 
     @Override
