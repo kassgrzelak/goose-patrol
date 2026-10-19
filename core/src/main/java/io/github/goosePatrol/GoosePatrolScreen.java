@@ -7,8 +7,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GoosePatrolScreen extends GameScreen {
-    private final Main game;
-
     private static final float CAMERA_ASPECT_RATIO = 9f / 16;
 
     private static final float CAMERA_WIDTH = 16;
@@ -19,7 +17,7 @@ public class GoosePatrolScreen extends GameScreen {
     private final ScreenViewport uiViewport;
 
     public GoosePatrolScreen(Main game) {
-        this.game = game;
+        super(game);
 
         mainViewport = new ExtendViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
         camera = mainViewport.getCamera();
