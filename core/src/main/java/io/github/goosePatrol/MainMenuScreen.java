@@ -6,12 +6,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen extends GameScreen {
-    private final Main game;
-
     private final ScreenViewport viewport;
 
     public MainMenuScreen(Main game) {
-        this.game = game;
+        super(game);
         viewport = new ScreenViewport();
     }
 
@@ -34,8 +32,6 @@ public class MainMenuScreen extends GameScreen {
     {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
-
-
     }
 
     @Override
