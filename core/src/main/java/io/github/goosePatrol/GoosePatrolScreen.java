@@ -10,16 +10,16 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class GoosePatrolScreen extends GameScreen {
-    private static final float WORLD_WIDTH = 30;
-    private static final float WORLD_HEIGHT = 30;
+import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
+import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
 
+public class GoosePatrolScreen extends GameScreen {
     private static final float CAMERA_ASPECT_RATIO = 9f / 16;
     private static final float CAMERA_WIDTH = 16;
     private static final float CAMERA_HEIGHT = CAMERA_WIDTH * CAMERA_ASPECT_RATIO;
 
     private final ExtendViewport mainViewport;
-    private final Camera camera;
+    private final GameCamera camera;
     private final ScreenViewport uiViewport;
 
     private final Player player;
@@ -30,7 +30,7 @@ public class GoosePatrolScreen extends GameScreen {
         super(game);
 
         mainViewport = new ExtendViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
-        camera = mainViewport.getCamera();
+        camera = new GameCamera(mainViewport.getCamera());
         uiViewport = new ScreenViewport();
 
         player = new Player(game.batch);
@@ -50,10 +50,7 @@ public class GoosePatrolScreen extends GameScreen {
         handleInput(delta);
 
         player.update(delta);
-
-        // Center camera on player.
-        camera.position.set(player.sprite.getX(), player.sprite.getY(), 0);
-        camera.update();
+        camera.update(delta, player.getPosition());
     }
 
     /**
@@ -89,7 +86,7 @@ public class GoosePatrolScreen extends GameScreen {
      * Use world units for drawing rather than pixels.
      */
     private void useWorldCoordinates() {
-        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.setProjectionMatrix(camera.getCamera().combined);
     }
 
     /**

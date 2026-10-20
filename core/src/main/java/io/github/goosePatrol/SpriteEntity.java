@@ -16,7 +16,7 @@ public abstract class SpriteEntity
      * @return The sprite's current position.
      */
     public Vector2 getPosition() {
-        return new Vector2(sprite.getX(), sprite.getY());
+        return new Vector2(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2);
     }
 
     /**

@@ -18,6 +18,7 @@ public class Player extends SpriteEntity {
     public Player(SpriteBatch batch) {
         super(new Sprite(new Texture("player.jpg")));
         sprite.setSize(1, 1);
+        sprite.setPosition(-0.5f, -0.5f);
 
         velocity = new Vector2(0, 0);
 
