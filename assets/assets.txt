@@ -1,2 +1,4 @@
+bg.jpg
 libgdx.png
 map.jpg
+player.jpg
