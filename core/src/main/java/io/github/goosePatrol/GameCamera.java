@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
 import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
 
+/**
+ * Class for the camera which follows the player..
+ */
 public class GameCamera {
     private final Camera camera;
 
@@ -19,10 +22,19 @@ public class GameCamera {
         velocity = new Vector2(0, 0);
     }
 
+    /**
+     * Get the LibGDX Camera object associated with this GameCamera.
+     * @return The LibGDX Camera for this GameCamera.
+     */
     public Camera getCamera() {
         return camera;
     }
 
+    /**
+     * Update the camera.
+     * @param delta Time passed since the last frame, in seconds.
+     * @param playerPosition The position of the player in world space.
+     */
     public void update(float delta, Vector2 playerPosition) {
         // Camera moves faster towards the player depending on distance.
         final Vector2 targetVel = playerPosition.cpy()

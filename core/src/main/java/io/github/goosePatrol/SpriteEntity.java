@@ -3,6 +3,9 @@ package io.github.goosePatrol;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Base class for entities represented by a sprite, such as enemies or the player.
+ */
 public abstract class SpriteEntity
 {
     protected final Sprite sprite;
