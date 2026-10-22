@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends SpriteEntity {
+    private int health = 100;
+
     private final Vector2 velocity;
 
     private final SpriteBatch batch;
@@ -27,7 +29,7 @@ public class Player extends SpriteEntity {
 
     /**
      * Handle keyboard/mouse inputs.
-     * @param delta Time passed since last frame, in seconds.
+     * @param delta Time passed since the last frame, in seconds.
      */
     private void handleInput(float delta) {
         Vector2 targetVel = new Vector2(0, 0);
@@ -61,5 +63,29 @@ public class Player extends SpriteEntity {
      */
     public void draw() {
         sprite.draw(batch);
+    }
+
+    /**
+     * Get the player's current health.
+     * @return The player's current health.
+     */
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     * Lower the player's health.
+     * @param damage The amount the player's health should be reduced by.
+     */
+    public void takeDamage(int damage) {
+        health -= damage;
+    }
+
+    /**
+     * Get whether the player is unconscious or not.
+     * @return true if the player's health is <= 0, false otherwise.
+     */
+    public boolean isUnconscious() {
+        return health <= 0;
     }
 }

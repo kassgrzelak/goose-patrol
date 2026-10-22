@@ -2,18 +2,21 @@ package io.github.goosePatrol;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
-import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
+import java.util.ArrayList;
 
 public class GoosePatrolScreen extends GameScreen {
+    private static final float WORLD_WIDTH = 30;
+    private static final float WORLD_HEIGHT = 30;
+
     private static final float CAMERA_ASPECT_RATIO = 9f / 16;
     private static final float CAMERA_WIDTH = 16;
     private static final float CAMERA_HEIGHT = CAMERA_WIDTH * CAMERA_ASPECT_RATIO;
@@ -21,6 +24,8 @@ public class GoosePatrolScreen extends GameScreen {
     private final ExtendViewport mainViewport;
     private final GameCamera camera;
     private final ScreenViewport uiViewport;
+
+    private final ArrayList<Enemy> enemies;
 
     private final Player player;
 
@@ -32,6 +37,8 @@ public class GoosePatrolScreen extends GameScreen {
         mainViewport = new ExtendViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
         camera = new GameCamera(mainViewport.getCamera());
         uiViewport = new ScreenViewport();
+
+        enemies = new ArrayList<>();
 
         player = new Player(game.batch);
 
@@ -45,9 +52,39 @@ public class GoosePatrolScreen extends GameScreen {
 
     }
 
+    /**
+     * Get whether an enemy is currently colliding with the player.
+     * @param enemy The enemy to check collision for.
+     * @return true if the enemy is colliding with the player, false otherwise.
+     */
+    private boolean collidingWithPlayer(Enemy enemy) {
+        return enemy.sprite.getBoundingRectangle()
+                .overlaps(player.sprite.getBoundingRectangle());
+    }
+
+    private void resolveCollisions() {
+        for (Enemy enemy : enemies) {
+            if (collidingWithPlayer(enemy)) {
+                player.takeDamage(enemy.getDamage());
+
+                Rectangle enemyRect = enemy.sprite.getBoundingRectangle();
+                Rectangle playerRect = player.sprite.getBoundingRectangle();
+
+                Vector2 enemyCenter = new Vector2();
+                enemyRect.getCenter(enemyCenter);
+                Vector2 playerCenter = new Vector2();
+                playerRect.getCenter(playerCenter);
+
+                final float intrusionDepth = enemyCenter.cpy().sub(playerCenter).len();
+            }
+        }
+    }
+
     @Override
     protected void update(float delta) {
         handleInput(delta);
+
+        resolveCollisions();
 
         player.update(delta);
         camera.update(delta, player.getPosition());
@@ -55,7 +92,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     /**
      * Handle keyboard/mouse inputs.
-     * @param delta Time passed since last frame, in seconds.
+     * @param delta Time passed since the last frame, in seconds.
      */
     private void handleInput(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
