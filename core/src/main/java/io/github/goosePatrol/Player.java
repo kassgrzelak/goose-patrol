@@ -6,25 +6,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class Player extends SpriteEntity {
     private int health = 100;
 
     private final Vector2 velocity;
 
-    private final SpriteBatch batch;
+    private long timeOfLastHit = -999999;
 
     private static final float PLAYER_SPEED = 5;
     private static final float PLAYER_ACCEL = 10;
+    private static final long PLAYER_HIT_COOLDOWN = 1000;
 
     public Player(SpriteBatch batch) {
-        super(new Sprite(new Texture("player.jpg")));
+        super(new Sprite(new Texture("player.jpg")), batch);
         sprite.setSize(1, 1);
         sprite.setPosition(-0.5f, -0.5f);
 
         velocity = new Vector2(0, 0);
-
-        this.batch = batch;
     }
 
     /**
@@ -59,13 +59,6 @@ public class Player extends SpriteEntity {
     }
 
     /**
-     * Draw the player to the screen.
-     */
-    public void draw() {
-        sprite.draw(batch);
-    }
-
-    /**
      * Get the player's current health.
      * @return The player's current health.
      */
@@ -74,11 +67,23 @@ public class Player extends SpriteEntity {
     }
 
     /**
-     * Lower the player's health.
+     * Get whether the player can be hit again.
+     * @return true if the hit cooldown period has passed, false otherwise.
+     */
+    private boolean canBeHit() {
+        return TimeUtils.timeSinceMillis(timeOfLastHit) > PLAYER_HIT_COOLDOWN;
+    }
+
+    /**
+     * Lower the player's health, but only if the hit cooldown period has passed.
      * @param damage The amount the player's health should be reduced by.
      */
     public void takeDamage(int damage) {
+        if (!canBeHit())
+            return;
+
         health -= damage;
+        timeOfLastHit = TimeUtils.millis();
     }
 
     /**

@@ -1,17 +1,32 @@
 package io.github.goosePatrol;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * Base class for entities represented by a sprite, such as enemies or the player.
+ * It is assumed that sprites are perfectly square and are draw centered.
  */
 public abstract class SpriteEntity
 {
     protected final Sprite sprite;
+    protected final Batch batch;
 
-    SpriteEntity(Sprite sprite) {
+    SpriteEntity(Sprite sprite, Batch batch) {
         this.sprite = sprite;
+        this.batch = batch;
+    }
+
+    /**
+     * Draw the sprite to the screen.
+     */
+    public void draw() {
+        sprite.draw(batch);
+    }
+
+    public float getWidth() {
+        return sprite.getWidth();
     }
 
     /**

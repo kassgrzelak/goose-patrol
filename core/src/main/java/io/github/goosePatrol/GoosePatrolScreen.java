@@ -39,6 +39,7 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
+        enemies.add(new BasicGoose(game.batch));
 
         player = new Player(game.batch);
 
@@ -52,31 +53,24 @@ public class GoosePatrolScreen extends GameScreen {
 
     }
 
-    /**
-     * Get whether an enemy is currently colliding with the player.
-     * @param enemy The enemy to check collision for.
-     * @return true if the enemy is colliding with the player, false otherwise.
-     */
-    private boolean collidingWithPlayer(Enemy enemy) {
-        return enemy.sprite.getBoundingRectangle()
-                .overlaps(player.sprite.getBoundingRectangle());
-    }
-
     private void resolveCollisions() {
         for (Enemy enemy : enemies) {
-            if (collidingWithPlayer(enemy)) {
-                player.takeDamage(enemy.getDamage());
+            final float playerRadius = player.getWidth() / 2;
+            final float enemyRadius = enemy.getWidth() / 2;
+            final float minDist = playerRadius + enemyRadius;
+            final float dist = player.getPosition().dst(enemy.getPosition());
+            final float intrusionDepth = minDist - dist;
 
-                Rectangle enemyRect = enemy.sprite.getBoundingRectangle();
-                Rectangle playerRect = player.sprite.getBoundingRectangle();
+            // No collision.
+            if (intrusionDepth <= 0)
+                continue;
 
-                Vector2 enemyCenter = new Vector2();
-                enemyRect.getCenter(enemyCenter);
-                Vector2 playerCenter = new Vector2();
-                playerRect.getCenter(playerCenter);
+            final Vector2 collisionResolveLine = enemy.getPosition().cpy().sub(player.getPosition()).nor();
+            final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
 
-                final float intrusionDepth = enemyCenter.cpy().sub(playerCenter).len();
-            }
+            enemy.deltaPosition(offset);
+
+            player.takeDamage(enemy.getDamage());
         }
     }
 
@@ -84,10 +78,13 @@ public class GoosePatrolScreen extends GameScreen {
     protected void update(float delta) {
         handleInput(delta);
 
-        resolveCollisions();
-
         player.update(delta);
         camera.update(delta, player.getPosition());
+
+        for (Enemy enemy : enemies)
+            enemy.update(delta, player.getPosition());
+
+        resolveCollisions();
     }
 
     /**
@@ -116,6 +113,10 @@ public class GoosePatrolScreen extends GameScreen {
         useWorldCoordinates();
 
         background.draw(game.batch);
+
+        for (Enemy enemy : enemies)
+            enemy.draw();
+
         player.draw();
     }
 
