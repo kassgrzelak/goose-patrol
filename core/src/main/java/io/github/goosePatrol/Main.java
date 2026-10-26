@@ -12,6 +12,7 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
+        font.getData().setScale(2);
 
         setScreen(new MainMenuScreen(this));
     }

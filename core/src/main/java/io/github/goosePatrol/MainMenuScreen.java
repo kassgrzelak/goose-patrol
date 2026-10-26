@@ -21,10 +21,8 @@ public class MainMenuScreen extends GameScreen {
     @Override
     protected void update(float delta)
     {
-        if (Gdx.input.isTouched()) {
+        if (Gdx.input.isTouched())
             game.setScreen(new GoosePatrolScreen(game));
-            dispose();
-        }
     }
 
     @Override

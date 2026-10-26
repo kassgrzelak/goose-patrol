@@ -17,7 +17,7 @@ public class Player extends SpriteEntity {
 
     private static final float PLAYER_SPEED = 5;
     private static final float PLAYER_ACCEL = 10;
-    private static final long PLAYER_HIT_COOLDOWN = 1000;
+    private static final long PLAYER_HIT_COOLDOWN = 1_000;
 
     public Player(SpriteBatch batch) {
         super(new Sprite(new Texture("player.jpg")), batch);

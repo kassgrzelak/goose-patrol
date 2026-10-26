@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -21,6 +22,8 @@ public class GoosePatrolScreen extends GameScreen {
     private static final float CAMERA_WIDTH = 16;
     private static final float CAMERA_HEIGHT = CAMERA_WIDTH * CAMERA_ASPECT_RATIO;
 
+    private static final long GAME_TIME_LIMIT = 5 * 60 * 1000;
+
     private final ExtendViewport mainViewport;
     private final GameCamera camera;
     private final ScreenViewport uiViewport;
@@ -31,6 +34,11 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final Sprite background;
 
+    private long timeStarted = 0;
+
+    private boolean gameLost = false;
+    private boolean gameWon = false;
+
     public GoosePatrolScreen(Main game) {
         super(game);
 
@@ -39,7 +47,7 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        enemies.add(new BasicGoose(game.batch));
+        enemies.add(new BasicGoose(game.batch)); // For testing.
 
         player = new Player(game.batch);
 
@@ -50,9 +58,12 @@ public class GoosePatrolScreen extends GameScreen {
 
     @Override
     public void show() {
-
+        timeStarted = TimeUtils.millis();
     }
 
+    /**
+     * Resolve collisions between the player and enemies.
+     */
     private void resolveCollisions() {
         for (Enemy enemy : enemies) {
             final float playerRadius = player.getWidth() / 2;
@@ -74,8 +85,22 @@ public class GoosePatrolScreen extends GameScreen {
         }
     }
 
+    private void checkWinLossConditions() {
+        if (player.isUnconscious())
+            gameLost = true;
+        if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT)
+            gameWon = true;
+
+        if (gameLost)
+            game.setScreen(new LossScreen(game));
+        else if (gameWon)
+            game.setScreen(new WinScreen(game));
+    }
+
     @Override
     protected void update(float delta) {
+        checkWinLossConditions();
+
         handleInput(delta);
 
         player.update(delta);
@@ -128,12 +153,31 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
+     * Draw the player's health UI.
+     */
+    private void drawHealth() {
+        game.font.draw(game.batch, "Health: " + player.getHealth() + "/100", 5, 30);
+    }
+
+    /**
+     * Draw the timer UI.
+     */
+    private void drawTimer() {
+        final long timeElapsed = TimeUtils.timeSinceMillis(timeStarted) / 1000;
+        final long minutes = timeElapsed / 60;
+        final long seconds = timeElapsed % 60;
+        final String timeString = String.format("%02d:%02d", minutes, seconds);
+        game.font.draw(game.batch, timeString, 5, 60);
+    }
+
+    /**
      * Draw UI elements.
      */
     private void drawUI() {
         useScreenCoordinates();
 
-        // Draw UI elements here.
+        drawHealth();
+        drawTimer();
     }
 
     /**
