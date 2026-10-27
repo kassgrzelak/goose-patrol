@@ -46,7 +46,8 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        enemies.add(new BasicGoose(game.batch)); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
 
         player = new Player(game.batch);
 
@@ -61,29 +62,78 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
+     * Resolve the collision (if any) between two sprite entities, moving both entities half the offset vector (i.e.,
+     * sharing the collision resolution).
+     *
+     * @param entity1 The first entity
+     * @param entity2 The second entity
+     */
+    private void resolveCollisionShared(SpriteEntity entity1, SpriteEntity entity2) {
+        final float entity1Radius = entity1.getRadius();
+        final float entity2Radius = entity2.getRadius();
+        final float minDist = entity1Radius + entity2Radius;
+        final float dist = entity1.getPosition().dst(entity2.getPosition());
+        final float intrusionDepth = minDist - dist;
+
+        // No collision.
+        if (intrusionDepth <= 0)
+            return;
+
+        final Vector2 collisionResolveLine = entity1.getPosition().sub(entity2.getPosition()).nor();
+        final Vector2 halfOffset = collisionResolveLine.cpy().scl(intrusionDepth / 2);
+
+        // Move each entity half the offset.
+        entity1.deltaPosition(halfOffset);
+        entity2.deltaPosition(halfOffset.cpy().scl(-1));
+
+    }
+
+    /**
+     * Resolve the collision (if any) between two sprite entities, moving one entity by the entire offset vector instead
+     * of sharing the offset between them.
+     * @param stationary The stationary entity. This entity will not be moved if there is a collision.
+     * @param moving The moving entity. This entity will be moved to resolve a collision if there is one.
+     * @return true if a collision occurred, false otherwise.
+     */
+    private boolean resolveCollisionOneSided(SpriteEntity stationary, SpriteEntity moving) {
+        final float stationaryRadius = stationary.getRadius();
+        final float movingRadius = moving.getRadius();
+        final float minDist = stationaryRadius + movingRadius;
+        final float dist = stationary.getPosition().dst(moving.getPosition());
+        final float intrusionDepth = minDist - dist;
+
+        // No collision.
+        if (intrusionDepth <= 0)
+            return false;
+
+        // Move moving entity away from stationary entity until collision is resolved.
+        final Vector2 collisionResolveLine = moving.getPosition().sub(stationary.getPosition()).nor();
+        final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
+
+        moving.deltaPosition(offset);
+        return true;
+    }
+
+    /**
      * Resolve collisions between the player and enemies.
+     * Note that collision boundaries of enemies and the player are modeled as circles.
      */
     private void resolveCollisions() {
+        // Resolve enemy-enemy collisions.
+        for (int i = 0; i < enemies.size() - 1; i++) {
+            for (int j = i + 1; j < enemies.size(); j++) {
+                final Enemy enemy1 = enemies.get(i);
+                final Enemy enemy2 = enemies.get(j);
+
+                resolveCollisionShared(enemy1, enemy2);
+            }
+        }
+
+        // Resolve enemy-player collisions.
         for (Enemy enemy : enemies) {
-            // Collision boundaries of enemies and the player are modeled as circles.
-            final float playerRadius = player.getRadius() / 2;
-            final float enemyRadius = enemy.getRadius() / 2;
-            final float minDist = playerRadius + enemyRadius;
-            final float dist = player.getPosition().dst(enemy.getPosition());
-            final float intrusionDepth = minDist - dist;
-
-            // No collision.
-            if (intrusionDepth <= 0)
-                continue;
-
-            // Move enemy away from player until collision is resolved.
-            final Vector2 collisionResolveLine = enemy.getPosition().sub(player.getPosition()).nor();
-            final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
-
-            enemy.deltaPosition(offset);
-
-            // Make player take damage if hit cooldown period has passed.
-            player.takeDamage(enemy.getDamage());
+            // Make player take damage if there is a collision and hit cooldown period has passed.
+            if (resolveCollisionOneSided(player, enemy))
+                player.takeDamage(enemy.getDamage());
         }
     }
 

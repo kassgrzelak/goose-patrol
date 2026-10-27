@@ -26,7 +26,7 @@ public abstract class SpriteEntity
     }
 
     public float getRadius() {
-        return sprite.getWidth();
+        return sprite.getWidth() / 2;
     }
 
     /**
