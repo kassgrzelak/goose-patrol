@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class BasicGoose extends Enemy {
-    public BasicGoose(Batch batch) {
+    public BasicGoose(Batch batch, Vector2 position) {
         super(3, new Sprite(new Texture("basic-goose.png")), batch);
         sprite.setSize(1, 1);
-        setPosition(5, 5);
+        setPosition(position.x, position.y);
     }
 
     @Override

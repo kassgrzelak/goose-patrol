@@ -23,6 +23,19 @@ public class GoosePatrolScreen extends GameScreen {
 
     private static final long GAME_TIME_LIMIT = 5 * 60 * 1000;
 
+    /**
+     * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
+     * values lead to the player easily walking through hordes of enemies, while lower values cause the player to become
+     * more easily surrounded.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.0f -> The player cannot push enemies away at all.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.5f -> The player is pushed by enemies as much as the player can push enemies back.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 1.0f -> The player is not pushed by enemies at all.
+     */
+    private static final float PLAYER_PUSH_STRENGTH = 0.8f;
+
     private final ExtendViewport mainViewport;
     private final GameCamera camera;
     private final ScreenViewport uiViewport;
@@ -46,7 +59,8 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        enemies.add(new BasicGoose(game.batch)); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
 
         player = new Player(game.batch);
 
@@ -61,32 +75,59 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Resolve collisions between the player and enemies.
+     * Resolve the collision (if any) between two sprite entities, moving each entity by a fraction of the offset vector.
+     *
+     * @param entity1 The first entity.
+     * @param entity2 The second entity.
+     * @param entity1Fraction The fraction of the collision resolution offset to be given to entity1. 1.0f means entity1
+     *                        moves the full amount and entity2 moves none, 0.5f is an even split, etc.
+     */
+    private boolean resolveCollision(SpriteEntity entity1, SpriteEntity entity2, float entity1Fraction) {
+        final float entity1Radius = entity1.getRadius();
+        final float entity2Radius = entity2.getRadius();
+        final float minDist = entity1Radius + entity2Radius;
+        final float dist = entity1.getPosition().dst(entity2.getPosition());
+        final float intrusionDepth = minDist - dist;
+
+        // No collision.
+        if (intrusionDepth <= 0)
+            return false;
+
+        final Vector2 collisionResolveLine = entity1.getPosition().sub(entity2.getPosition()).nor();
+        final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
+
+        // Move each entity half the offset.
+        entity1.deltaPosition(offset.cpy().scl(entity1Fraction));
+        entity2.deltaPosition(offset.cpy().scl(entity1Fraction - 1));
+        return true;
+    }
+
+    /**
+     * Resolve enemy-enemy collisions as well as enemy-player collisions.
+     * Note that collision boundaries of enemies and the player are modeled as circles.
      */
     private void resolveCollisions() {
+        // Resolve enemy-enemy collisions.
+        for (int i = 0; i < enemies.size() - 1; i++) {
+            for (int j = i + 1; j < enemies.size(); j++) {
+                final Enemy enemy1 = enemies.get(i);
+                final Enemy enemy2 = enemies.get(j);
+
+                resolveCollision(enemy1, enemy2, 0.5f);
+            }
+        }
+
+        // Resolve enemy-player collisions.
         for (Enemy enemy : enemies) {
-            // Collision boundaries of enemies and the player are modeled as circles.
-            final float playerRadius = player.getRadius() / 2;
-            final float enemyRadius = enemy.getRadius() / 2;
-            final float minDist = playerRadius + enemyRadius;
-            final float dist = player.getPosition().dst(enemy.getPosition());
-            final float intrusionDepth = minDist - dist;
-
-            // No collision.
-            if (intrusionDepth <= 0)
-                continue;
-
-            // Move enemy away from player until collision is resolved.
-            final Vector2 collisionResolveLine = enemy.getPosition().sub(player.getPosition()).nor();
-            final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
-
-            enemy.deltaPosition(offset);
-
-            // Make player take damage if hit cooldown period has passed.
-            player.takeDamage(enemy.getDamage());
+            // Make player take damage if there is a collision and hit cooldown period has passed.
+            if (resolveCollision(enemy, player, PLAYER_PUSH_STRENGTH))
+                player.takeDamage(enemy.getDamage());
         }
     }
 
+    /**
+     * Set the game screen to the appropriate win/loss if a win/loss condition is met. Otherwise, do nothing.
+     */
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
