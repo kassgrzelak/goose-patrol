@@ -17,12 +17,12 @@ public class Player extends SpriteEntity {
 
     private static final float PLAYER_SPEED = 5;
     private static final float PLAYER_ACCEL = 10;
-    private static final long PLAYER_HIT_COOLDOWN = 1_000;
+    private static final long PLAYER_HIT_COOLDOWN = 1000;
 
     public Player(SpriteBatch batch) {
         super(new Sprite(new Texture("player.jpg")), batch);
         sprite.setSize(1, 1);
-        sprite.setPosition(-0.5f, -0.5f);
+        sprite.setPosition(-0.5f, -0.5f); // Player starts at (0,0), this centers them.
 
         velocity = new Vector2(0, 0);
     }
@@ -34,6 +34,7 @@ public class Player extends SpriteEntity {
     private void handleInput(float delta) {
         Vector2 targetVel = new Vector2(0, 0);
 
+        // Input keys determine target direction.
         if (Gdx.input.isKeyPressed(Input.Keys.W))
             targetVel.add(0, 1);
         if (Gdx.input.isKeyPressed(Input.Keys.A))
@@ -43,8 +44,11 @@ public class Player extends SpriteEntity {
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             targetVel.add(1, 0);
 
+        // Normalize then scale to player speed.
         targetVel.nor().scl(PLAYER_SPEED);
 
+        // Smoothly change player's velocity to the target velocity. The effect is a smoother movement than instantly
+        // changing to the target velocity, with configurable smoothness by changing the PLAYER_ACCEL constant.
         velocity.lerp(targetVel, delta * PLAYER_ACCEL);
     }
 
@@ -55,6 +59,7 @@ public class Player extends SpriteEntity {
     public void update(float delta) {
         handleInput(delta);
 
+        // Move player.
         deltaPosition(velocity.cpy().scl(delta));
     }
 

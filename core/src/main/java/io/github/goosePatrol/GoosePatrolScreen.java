@@ -65,8 +65,9 @@ public class GoosePatrolScreen extends GameScreen {
      */
     private void resolveCollisions() {
         for (Enemy enemy : enemies) {
-            final float playerRadius = player.getWidth() / 2;
-            final float enemyRadius = enemy.getWidth() / 2;
+            // Collision boundaries of enemies and the player are modeled as circles.
+            final float playerRadius = player.getRadius() / 2;
+            final float enemyRadius = enemy.getRadius() / 2;
             final float minDist = playerRadius + enemyRadius;
             final float dist = player.getPosition().dst(enemy.getPosition());
             final float intrusionDepth = minDist - dist;
@@ -75,11 +76,13 @@ public class GoosePatrolScreen extends GameScreen {
             if (intrusionDepth <= 0)
                 continue;
 
-            final Vector2 collisionResolveLine = enemy.getPosition().cpy().sub(player.getPosition()).nor();
+            // Move enemy away from player until collision is resolved.
+            final Vector2 collisionResolveLine = enemy.getPosition().sub(player.getPosition()).nor();
             final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
 
             enemy.deltaPosition(offset);
 
+            // Make player take damage if hit cooldown period has passed.
             player.takeDamage(enemy.getDamage());
         }
     }

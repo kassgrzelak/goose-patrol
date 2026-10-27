@@ -36,7 +36,8 @@ public class GameCamera {
      * @param playerPosition The position of the player in world space.
      */
     public void update(float delta, Vector2 playerPosition) {
-        // Camera moves faster towards the player depending on distance.
+        // Camera moves faster towards the player depending on distance. The effect is a smooth following of the player
+        // rather than a rigid locking.
         final Vector2 targetVel = playerPosition.cpy()
                 .sub(camera.position.x, camera.position.y)
                 .scl(CAMERA_SPEED_MULTIPLIER);

@@ -1,5 +1,8 @@
 package io.github.goosePatrol;
 
+/**
+ * The screen the player sees when the game has been won.
+ */
 public class WinScreen extends GameScreen {
     WinScreen(Main game) {
         super(game);
@@ -12,36 +15,6 @@ public class WinScreen extends GameScreen {
 
     @Override
     protected void draw() {
-
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
 
     }
 }

@@ -4,6 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * Main game class that controls which screen is visible.
+ */
 public class Main extends Game {
     public SpriteBatch batch;
     public BitmapFont font;

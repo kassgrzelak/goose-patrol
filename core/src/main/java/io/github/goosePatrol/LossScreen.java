@@ -1,5 +1,8 @@
 package io.github.goosePatrol;
 
+/**
+ * The screen the player sees when the game has been lost.
+ */
 public class LossScreen extends GameScreen {
 
     LossScreen(Main game) {
@@ -13,36 +16,6 @@ public class LossScreen extends GameScreen {
 
     @Override
     protected void draw() {
-
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
 
     }
 }

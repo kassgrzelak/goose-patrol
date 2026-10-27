@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Base class for entities represented by a sprite, such as enemies or the player.
- * It is assumed that sprites are perfectly square and are draw centered.
+ * It is assumed that sprites are perfectly square and are drawn centered.
  */
 public abstract class SpriteEntity
 {
@@ -25,7 +25,7 @@ public abstract class SpriteEntity
         sprite.draw(batch);
     }
 
-    public float getWidth() {
+    public float getRadius() {
         return sprite.getWidth();
     }
 
