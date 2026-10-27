@@ -23,6 +23,19 @@ public class GoosePatrolScreen extends GameScreen {
 
     private static final long GAME_TIME_LIMIT = 5 * 60 * 1000;
 
+    /**
+     * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
+     * values lead to the player easily walking through hordes of enemies, while lower values cause the player to become
+     * more easily surrounded.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.0f -> The player cannot push enemies away at all.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.5f -> The player is pushed by enemies as much as the player can push enemies back.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 1.0f -> The player is not pushed by enemies at all.
+     */
+    private static final float PLAYER_PUSH_STRENGTH = 0.8f;
+
     private final ExtendViewport mainViewport;
     private final GameCamera camera;
     private final ScreenViewport uiViewport;
@@ -62,13 +75,14 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Resolve the collision (if any) between two sprite entities, moving both entities half the offset vector (i.e.,
-     * sharing the collision resolution).
+     * Resolve the collision (if any) between two sprite entities, moving each entity by a fraction of the offset vector.
      *
-     * @param entity1 The first entity
-     * @param entity2 The second entity
+     * @param entity1 The first entity.
+     * @param entity2 The second entity.
+     * @param entity1Fraction The fraction of the collision resolution offset to be given to entity1. 1.0f means entity1
+     *                        moves the full amount and entity2 moves none, 0.5f is an even split, etc.
      */
-    private void resolveCollisionShared(SpriteEntity entity1, SpriteEntity entity2) {
+    private boolean resolveCollision(SpriteEntity entity1, SpriteEntity entity2, float entity1Fraction) {
         final float entity1Radius = entity1.getRadius();
         final float entity2Radius = entity2.getRadius();
         final float minDist = entity1Radius + entity2Radius;
@@ -77,40 +91,14 @@ public class GoosePatrolScreen extends GameScreen {
 
         // No collision.
         if (intrusionDepth <= 0)
-            return;
-
-        final Vector2 collisionResolveLine = entity1.getPosition().sub(entity2.getPosition()).nor();
-        final Vector2 halfOffset = collisionResolveLine.cpy().scl(intrusionDepth / 2);
-
-        // Move each entity half the offset.
-        entity1.deltaPosition(halfOffset);
-        entity2.deltaPosition(halfOffset.cpy().scl(-1));
-
-    }
-
-    /**
-     * Resolve the collision (if any) between two sprite entities, moving one entity by the entire offset vector instead
-     * of sharing the offset between them.
-     * @param stationary The stationary entity. This entity will not be moved if there is a collision.
-     * @param moving The moving entity. This entity will be moved to resolve a collision if there is one.
-     * @return true if a collision occurred, false otherwise.
-     */
-    private boolean resolveCollisionOneSided(SpriteEntity stationary, SpriteEntity moving) {
-        final float stationaryRadius = stationary.getRadius();
-        final float movingRadius = moving.getRadius();
-        final float minDist = stationaryRadius + movingRadius;
-        final float dist = stationary.getPosition().dst(moving.getPosition());
-        final float intrusionDepth = minDist - dist;
-
-        // No collision.
-        if (intrusionDepth <= 0)
             return false;
 
-        // Move moving entity away from stationary entity until collision is resolved.
-        final Vector2 collisionResolveLine = moving.getPosition().sub(stationary.getPosition()).nor();
+        final Vector2 collisionResolveLine = entity1.getPosition().sub(entity2.getPosition()).nor();
         final Vector2 offset = collisionResolveLine.cpy().scl(intrusionDepth);
 
-        moving.deltaPosition(offset);
+        // Move each entity half the offset.
+        entity1.deltaPosition(offset.cpy().scl(entity1Fraction));
+        entity2.deltaPosition(offset.cpy().scl(entity1Fraction - 1));
         return true;
     }
 
@@ -125,14 +113,14 @@ public class GoosePatrolScreen extends GameScreen {
                 final Enemy enemy1 = enemies.get(i);
                 final Enemy enemy2 = enemies.get(j);
 
-                resolveCollisionShared(enemy1, enemy2);
+                resolveCollision(enemy1, enemy2, 0.5f);
             }
         }
 
         // Resolve enemy-player collisions.
         for (Enemy enemy : enemies) {
             // Make player take damage if there is a collision and hit cooldown period has passed.
-            if (resolveCollisionOneSided(player, enemy))
+            if (resolveCollision(enemy, player, PLAYER_PUSH_STRENGTH))
                 player.takeDamage(enemy.getDamage());
         }
     }
