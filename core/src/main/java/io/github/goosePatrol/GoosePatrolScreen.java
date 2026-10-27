@@ -103,7 +103,7 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Resolve collisions between the player and enemies.
+     * Resolve enemy-enemy collisions as well as enemy-player collisions.
      * Note that collision boundaries of enemies and the player are modeled as circles.
      */
     private void resolveCollisions() {
@@ -125,6 +125,9 @@ public class GoosePatrolScreen extends GameScreen {
         }
     }
 
+    /**
+     * Set the game screen to the appropriate win/loss if a win/loss condition is met. Otherwise, do nothing.
+     */
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
