@@ -14,11 +14,6 @@ public class MainMenuScreen extends GameScreen {
     }
 
     @Override
-    public void show() {
-
-    }
-
-    @Override
     protected void update(float delta)
     {
         if (Gdx.input.isTouched())
@@ -35,25 +30,5 @@ public class MainMenuScreen extends GameScreen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }
