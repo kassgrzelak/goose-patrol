@@ -1,2 +1,5 @@
+basic-goose.png
+bg.jpg
 libgdx.png
 map.jpg
+player.jpg

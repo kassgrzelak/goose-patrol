@@ -1,8 +1,9 @@
 package io.github.goosePatrol;
 
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 
-public abstract class GameScreen implements Screen {
+public abstract class GameScreen extends ScreenAdapter
+{
     protected final Main game;
 
     GameScreen(Main game) {
