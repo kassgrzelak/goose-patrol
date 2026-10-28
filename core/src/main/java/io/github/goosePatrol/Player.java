@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
+import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
+
 public class Player extends SpriteEntity {
     private int health = 100;
 
@@ -61,6 +64,15 @@ public class Player extends SpriteEntity {
 
         // Move player.
         deltaPosition(velocity.cpy().scl(delta));
+
+        if (getX() < -WORLD_WIDTH / 2 + getRadius())
+            setX(-WORLD_WIDTH / 2 + getRadius());
+        if (getX() > WORLD_WIDTH / 2 - getRadius())
+            setX(GameConstants.WORLD_WIDTH / 2 - getRadius());
+        if (getY() < -WORLD_HEIGHT / 2 + getRadius())
+            setY(-WORLD_HEIGHT / 2 + getRadius());
+        if (getY() > WORLD_HEIGHT / 2 - getRadius())
+            setY(WORLD_HEIGHT / 2 - getRadius());
     }
 
     /**
