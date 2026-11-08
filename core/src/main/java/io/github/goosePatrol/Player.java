@@ -21,7 +21,9 @@ public class Player extends SpriteEntity {
     private static final float PLAYER_SPEED = 5;
     private static final float PLAYER_ACCEL = 10;
     private static final long PLAYER_HIT_COOLDOWN = 1000;
-
+    private float speedBuffTimer = 0f;
+    private float speedMultiplierTimer = 0f;
+    private float speedMultiplier = 1.0f;
     public Player(SpriteBatch batch) {
         super(new Sprite(new Texture("player.jpg")), batch);
         sprite.setSize(1, 1);
@@ -47,20 +49,27 @@ public class Player extends SpriteEntity {
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             targetVel.add(1, 0);
 
-        // Normalize then scale to player speed.
-        targetVel.nor().scl(PLAYER_SPEED);
+        // Normalize then scale to player speed. adjusted to include a multiplier for events
+        targetVel.nor().scl(PLAYER_SPEED * speedMultiplier);
 
         // Smoothly change player's velocity to the target velocity. The effect is a smoother movement than instantly
         // changing to the target velocity, with configurable smoothness by changing the PLAYER_ACCEL constant.
         velocity.lerp(targetVel, delta * PLAYER_ACCEL);
     }
 
-    /**
-     * Update the player.
-     * @param delta the time passed since the last frame, in seconds.
-     */
+
     public void update(float delta) {
-        handleInput(delta);
+        if (speedMultiplierTimer > 0) {
+            speedMultiplierTimer -= delta;
+            if (speedMultiplierTimer <= 0) {
+                speedMultiplier = 1.0f;
+            }
+        }
+
+    handleInput(delta);
+
+
+
 
         // Move player.
         deltaPosition(velocity.cpy().scl(delta));
@@ -110,4 +119,18 @@ public class Player extends SpriteEntity {
     public boolean isUnconscious() {
         return health <= 0;
     }
+
+
+    public void applySpeedMultiplier(float multiplier, float duration) {
+        this.speedMultiplier = multiplier;
+        this.speedMultiplierTimer = duration;
+    }
+
+
+
+
 }
+
+
+
+
