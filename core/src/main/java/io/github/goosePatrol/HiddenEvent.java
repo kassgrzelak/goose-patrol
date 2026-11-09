@@ -1,5 +1,9 @@
 package io.github.goosePatrol;
 import com.badlogic.gdx.math.Rectangle;
+
+/**
+ * Abstract class for a hidden event which triggers upon the player colliding with it.
+ */
 public abstract class HiddenEvent {
     private final Rectangle bounds;
     private boolean triggered = false;

@@ -7,7 +7,7 @@ import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
 import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
 
 /**
- * Class for the camera which follows the player..
+ * Class for the camera which follows the player.
  */
 public class GameCamera {
     private final Camera camera;

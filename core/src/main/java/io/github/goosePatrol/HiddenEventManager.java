@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.Matrix4;
 
 import java.util.ArrayList;
 
+/**
+ * Class that manages hidden events.
+ */
 public class HiddenEventManager {
     private final ArrayList<HiddenEvent> events;
     private final ShapeRenderer shapeRenderer;

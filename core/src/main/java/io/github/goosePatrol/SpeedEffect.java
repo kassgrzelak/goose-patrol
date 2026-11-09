@@ -1,5 +1,8 @@
 package io.github.goosePatrol;
 
+/**
+ * An effect which changes the player's speed multiplier.
+ */
 public class SpeedEffect extends Effect {
     private final float speedBoost;
 

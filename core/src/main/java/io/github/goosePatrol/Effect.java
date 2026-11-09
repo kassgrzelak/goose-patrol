@@ -2,6 +2,9 @@ package io.github.goosePatrol;
 
 import com.badlogic.gdx.utils.TimeUtils;
 
+/**
+ * An abstract class representing some effect on the player.
+ */
 public abstract class Effect {
     protected final long durationMillis;
     protected long endTime = -999999;

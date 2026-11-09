@@ -13,6 +13,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
+/**
+ * The main screen where the actual game is played.
+ */
 public class GoosePatrolScreen extends GameScreen {
     private static final float WORLD_WIDTH = 30;
     private static final float WORLD_HEIGHT = 30;
@@ -42,7 +45,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final ArrayList<Enemy> enemies;
 
-    private Player player;
+    private final Player player;
 
     private final Sprite background;
 
@@ -52,6 +55,7 @@ public class GoosePatrolScreen extends GameScreen {
     private boolean gameWon = false;
 
     private final HiddenEventManager hiddenEventManager;
+    private final WaveManager waveManager;
 
     public GoosePatrolScreen(Main game) {
         super(game);
@@ -62,11 +66,27 @@ public class GoosePatrolScreen extends GameScreen {
 
         enemies = new ArrayList<>();
 
+        ArrayList<Wave> waves = new ArrayList<>();
+
+        ArrayList<Enemy> wave1 = new ArrayList<>();
+        wave1.add(new BasicGoose(game.batch, new Vector2(5, 5)));
+        wave1.add(new BasicGoose(game.batch, new Vector2(5, -5)));
+        waves.add(new Wave(wave1, 5000));
+
+        ArrayList<Enemy> wave2 = new ArrayList<>();
+        wave2.add(new BasicGoose(game.batch, new Vector2(-5, 5)));
+        wave2.add(new BasicGoose(game.batch, new Vector2(-5, -5)));
+        waves.add(new Wave(wave2, 5000));
+
+        waveManager = new WaveManager(waves, enemies);
+
         player = new Player(game.batch);
 
         background = new Sprite(new Texture("bg.jpg"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
         background.setPosition(-WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
+
+        timeStarted = TimeUtils.millis();
 
         ArrayList<HiddenEvent> events = new ArrayList<>();
 
@@ -74,15 +94,6 @@ public class GoosePatrolScreen extends GameScreen {
         events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), -2, 1, 1, 1));
 
         hiddenEventManager = new HiddenEventManager(events);
-    }
-
-    @Override
-    public void show() {
-        enemies.clear();
-        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
-        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
-
-        timeStarted = TimeUtils.millis();
     }
 
     /**
@@ -155,6 +166,11 @@ public class GoosePatrolScreen extends GameScreen {
 
     @Override
     protected void update(float delta) {
+        if (enemies.isEmpty())
+            waveManager.forceNextWave();
+        else
+            waveManager.startNextWaveIfPossible();
+
         checkWinLossConditions();
 
         handleInput(delta);

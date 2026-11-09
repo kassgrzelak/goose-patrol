@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
 import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
 
+/**
+ * Player class.
+ */
 public class Player extends SpriteEntity {
     private int health = 100;
 
@@ -57,7 +61,8 @@ public class Player extends SpriteEntity {
             targetVel.add(1, 0);
 
         // Normalize then scale to player speed, scaled by speed multiplier.
-        targetVel.nor().scl(PLAYER_SPEED * speedMultiplier);
+        targetVel.nor().scl(PLAYER_SPEED *
+                MathUtils.clamp(speedMultiplier, PLAYER_MIN_SPEED_MULTIPLIER, PLAYER_MAX_SPEED_MULTIPLIER));
 
         // Smoothly change player's velocity to the target velocity. The effect is a smoother movement than instantly
         // changing to the target velocity, with configurable smoothness by changing the PLAYER_ACCEL constant.
