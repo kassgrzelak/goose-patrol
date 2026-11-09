@@ -2,47 +2,38 @@ package io.github.goosePatrol;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
+
+/**
+ * A class encapsulating a single wave of enemies. A wave has a list of the enemies it contains as well as a duration
+ * after which the next wave will spawn in.
+ */
 public class Wave {
-    private final int waveNumber;
-    private final Array<Enemy> longbois;
-    private float waveCountdown;
-    private boolean completed;
+    private final ArrayList<Enemy> enemies;
+    private final long durationMillis;
+    private long endTime = -999999;
 
-    public Wave(int waveNumber,Array<Enemy> longbois, float waveCountdown){
-        this.waveNumber = waveNumber;
-        this.longbois = longbois;
-        this.waveCountdown = waveCountdown;
-        this.completed = false;
+    public Wave(ArrayList<Enemy> enemies, long durationMillis) {
+        this.enemies = enemies;
+        this.durationMillis = durationMillis;
     }
 
-public void update(float delta, Vector2 playerPosition){
-        if (completed) {
-            return;
-        }
-        waveCountdown -= delta;
-
-        // checks if all the longbois have been killed
-    if(longbois.size==0 || waveCountdown<=0){
-        completed = true;
+    /**
+     * Add all the wave's enemies to the given enemy array and set the wave's end time. This should only be called once.
+     * @param enemies The enemy array to add the wave's enemies to.
+     */
+    public void startWave(ArrayList<Enemy> enemies) {
+        enemies.addAll(this.enemies);
+        endTime = TimeUtils.millis() + durationMillis;
     }
 
-}
-
-    public boolean isCompleted() {
-        return completed;
+    /**
+     * Get whether the wave has finished or not.
+     * @return true if the wave's end time has passed, false otherwise.
+     */
+    public boolean finished() {
+        return TimeUtils.millis() >= endTime;
     }
-
-    public Array<Enemy> getLongbois() {
-        return longbois;
-    }
-
-    public int getWaveNumber() {
-        return waveNumber;
-    }
-
-    public float getWaveCountdown() {
-        return waveCountdown;
-    }
-
 }

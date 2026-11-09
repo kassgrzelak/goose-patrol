@@ -2,6 +2,9 @@ package io.github.goosePatrol;
 
 import com.badlogic.gdx.ScreenAdapter;
 
+/**
+ * An abstract class for a screen that has a draw and update function.
+ */
 public abstract class GameScreen extends ScreenAdapter
 {
     protected final Main game;

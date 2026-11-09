@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Basic goose enemy.
+ */
 public class BasicGoose extends Enemy {
     public BasicGoose(Batch batch, Vector2 position) {
         super(3, new Sprite(new Texture("basic-goose.png")), batch);
