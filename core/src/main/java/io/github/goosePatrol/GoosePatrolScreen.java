@@ -42,7 +42,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final ArrayList<Enemy> enemies;
 
-    private final Player player;
+    private Player player;
 
     private final Sprite background;
 
@@ -59,8 +59,6 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
-        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
 
         player = new Player(game.batch);
 
@@ -71,6 +69,12 @@ public class GoosePatrolScreen extends GameScreen {
 
     @Override
     public void show() {
+        enemies.clear();
+        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
+
+        player = new Player(game.batch);
+
         timeStarted = TimeUtils.millis();
     }
 
@@ -81,6 +85,8 @@ public class GoosePatrolScreen extends GameScreen {
      * @param entity2 The second entity.
      * @param entity1Fraction The fraction of the collision resolution offset to be given to entity1. 1.0f means entity1
      *                        moves the full amount and entity2 moves none, 0.5f is an even split, etc.
+     *
+     * @return true if there was a collision, false if there was not.
      */
     private boolean resolveCollision(SpriteEntity entity1, SpriteEntity entity2, float entity1Fraction) {
         final float entity1Radius = entity1.getRadius();
