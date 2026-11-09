@@ -14,7 +14,6 @@ public abstract class SpriteEntity
     protected final Batch batch;
 
     SpriteEntity(Sprite sprite, Batch batch) {
-        System.out.println("w:" + sprite.getWidth() + " h:" + sprite.getHeight());
         this.sprite = sprite;
         this.batch = batch;
     }
