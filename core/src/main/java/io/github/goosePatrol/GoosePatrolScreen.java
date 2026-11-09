@@ -21,7 +21,7 @@ public class GoosePatrolScreen extends GameScreen {
     private static final float CAMERA_WIDTH = 16;
     private static final float CAMERA_HEIGHT = CAMERA_WIDTH * CAMERA_ASPECT_RATIO;
 
-    private static final long GAME_TIME_LIMIT = 5 * 60 * 1000;
+    private static final long GAME_TIME_LIMIT_MILLIS = 5 * 60 * 1000;
 
     /**
      * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
@@ -42,7 +42,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final ArrayList<Enemy> enemies;
 
-    private final Player player;
+    private Player player;
 
     private final Sprite background;
 
@@ -50,6 +50,8 @@ public class GoosePatrolScreen extends GameScreen {
 
     private boolean gameLost = false;
     private boolean gameWon = false;
+
+    private final HiddenEventManager hiddenEventManager;
 
     public GoosePatrolScreen(Main game) {
         super(game);
@@ -59,18 +61,27 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
-        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
 
         player = new Player(game.batch);
 
         background = new Sprite(new Texture("bg.jpg"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
         background.setPosition(-WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
+
+        ArrayList<HiddenEvent> events = new ArrayList<>();
+
+        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), -2, -1, 1, 1));
+        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), -2, 1, 1, 1));
+
+        hiddenEventManager = new HiddenEventManager(events);
     }
 
     @Override
     public void show() {
+        enemies.clear();
+        enemies.add(new BasicGoose(game.batch, new Vector2(5, 5))); // For testing.
+        enemies.add(new BasicGoose(game.batch, new Vector2(-5, 5))); // For testing.
+
         timeStarted = TimeUtils.millis();
     }
 
@@ -81,6 +92,8 @@ public class GoosePatrolScreen extends GameScreen {
      * @param entity2 The second entity.
      * @param entity1Fraction The fraction of the collision resolution offset to be given to entity1. 1.0f means entity1
      *                        moves the full amount and entity2 moves none, 0.5f is an even split, etc.
+     *
+     * @return true if there was a collision, false if there was not.
      */
     private boolean resolveCollision(SpriteEntity entity1, SpriteEntity entity2, float entity1Fraction) {
         final float entity1Radius = entity1.getRadius();
@@ -131,7 +144,7 @@ public class GoosePatrolScreen extends GameScreen {
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
-        if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT)
+        if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT_MILLIS)
             gameWon = true;
 
         if (gameLost)
@@ -153,6 +166,7 @@ public class GoosePatrolScreen extends GameScreen {
             enemy.update(delta, player.getPosition());
 
         resolveCollisions();
+        hiddenEventManager.checkEventCollision(player);
     }
 
     /**
@@ -172,6 +186,8 @@ public class GoosePatrolScreen extends GameScreen {
         drawWorld();
         drawUI();
         game.batch.end();
+
+        hiddenEventManager.debugDrawEvents(camera.getCamera().combined);
     }
 
     /**

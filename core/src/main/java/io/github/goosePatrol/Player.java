@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
+
 import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
 import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
 
@@ -20,7 +22,14 @@ public class Player extends SpriteEntity {
 
     private static final float PLAYER_SPEED = 5;
     private static final float PLAYER_ACCEL = 10;
-    private static final long PLAYER_HIT_COOLDOWN = 1000;
+    private static final long PLAYER_HIT_COOLDOWN_MILLIS = 1000;
+
+    private static final float PLAYER_MIN_SPEED_MULTIPLIER = 0.1f;
+    private static final float PLAYER_MAX_SPEED_MULTIPLIER = 2.0f;
+
+    private float speedMultiplier = 1.0f;
+
+    private final ArrayList<Effect> activeEffects = new ArrayList<>();
 
     public Player(SpriteBatch batch) {
         super(new Sprite(new Texture("player.jpg")), batch);
@@ -47,19 +56,29 @@ public class Player extends SpriteEntity {
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             targetVel.add(1, 0);
 
-        // Normalize then scale to player speed.
-        targetVel.nor().scl(PLAYER_SPEED);
+        // Normalize then scale to player speed, scaled by speed multiplier.
+        targetVel.nor().scl(PLAYER_SPEED * speedMultiplier);
 
         // Smoothly change player's velocity to the target velocity. The effect is a smoother movement than instantly
         // changing to the target velocity, with configurable smoothness by changing the PLAYER_ACCEL constant.
         velocity.lerp(targetVel, delta * PLAYER_ACCEL);
     }
 
-    /**
-     * Update the player.
-     * @param delta the time passed since the last frame, in seconds.
-     */
+    private void updateEffects() {
+        final ArrayList<Effect> removeEffects = new ArrayList<>();
+
+        for (Effect effect : activeEffects) {
+            if (effect.unapplyIfWoreOff(this))
+                removeEffects.add(effect);
+        }
+
+        for (Effect effect : removeEffects)
+            activeEffects.remove(effect);
+    }
+
     public void update(float delta) {
+        updateEffects();
+
         handleInput(delta);
 
         // Move player.
@@ -88,7 +107,7 @@ public class Player extends SpriteEntity {
      * @return true if the hit cooldown period has passed, false otherwise.
      */
     private boolean canBeHit() {
-        return TimeUtils.timeSinceMillis(timeOfLastHit) > PLAYER_HIT_COOLDOWN;
+        return TimeUtils.timeSinceMillis(timeOfLastHit) > PLAYER_HIT_COOLDOWN_MILLIS;
     }
 
     /**
@@ -110,4 +129,21 @@ public class Player extends SpriteEntity {
     public boolean isUnconscious() {
         return health <= 0;
     }
+
+    public void addEffect(Effect effect) {
+        effect.apply(this);
+        activeEffects.add(effect);
+    }
+
+    /**
+     * Change the player's speed multiplier by some amount.
+     * @param delta The amount to change the player's speed multiplier by.
+     */
+    public void deltaSpeedMultiplier(float delta) {
+        speedMultiplier += delta;
+    }
 }
+
+
+
+
