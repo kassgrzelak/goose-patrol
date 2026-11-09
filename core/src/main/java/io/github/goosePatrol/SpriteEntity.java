@@ -14,6 +14,7 @@ public abstract class SpriteEntity
     protected final Batch batch;
 
     SpriteEntity(Sprite sprite, Batch batch) {
+        System.out.println("w:" + sprite.getWidth() + " h:" + sprite.getHeight());
         this.sprite = sprite;
         this.batch = batch;
     }
@@ -42,7 +43,7 @@ public abstract class SpriteEntity
      * @return The sprite's current x-position.
      */
     public float getX() {
-        return sprite.getX();
+        return sprite.getX() + sprite.getWidth() / 2;
     }
 
     /**
@@ -50,7 +51,23 @@ public abstract class SpriteEntity
      * @return The sprite's current y-position.
      */
     public float getY() {
-        return sprite.getY();
+        return sprite.getY() + sprite.getHeight() / 2;
+    }
+
+    /**
+     * Set the sprite's x-position.
+     * @param newX The sprite's new x-position.
+     */
+    public void setX(float newX) {
+        setPosition(newX, getY());
+    }
+
+    /**
+     * Set the sprite's y-position.
+     * @param newY The sprite's new y-position.
+     */
+    public void setY(float newY) {
+        setPosition(getX(), newY);
     }
 
     /**
@@ -59,7 +76,7 @@ public abstract class SpriteEntity
      * @param newY The sprite's new y-coordinate.
      */
     protected void setPosition(float newX, float newY) {
-        sprite.setPosition(newX, newY);
+        sprite.setPosition(newX - sprite.getWidth() / 2, newY - sprite.getHeight() / 2);
     }
 
     /**
