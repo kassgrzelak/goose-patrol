@@ -49,7 +49,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final Sprite background;
 
-    private long timeStarted = 0;
+    private final long timeStarted;
 
     private boolean gameLost = false;
     private boolean gameWon = false;
@@ -65,20 +65,7 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-
-        ArrayList<Wave> waves = new ArrayList<>();
-
-        ArrayList<Enemy> wave1 = new ArrayList<>();
-        wave1.add(new BasicGoose(game.batch, new Vector2(5, 5)));
-        wave1.add(new BasicGoose(game.batch, new Vector2(5, -5)));
-        waves.add(new Wave(wave1, 5000));
-
-        ArrayList<Enemy> wave2 = new ArrayList<>();
-        wave2.add(new BasicGoose(game.batch, new Vector2(-5, 5)));
-        wave2.add(new BasicGoose(game.batch, new Vector2(-5, -5)));
-        waves.add(new Wave(wave2, 5000));
-
-        waveManager = new WaveManager(waves, enemies);
+        waveManager = WaveManager.getGameWaveManager(game.batch, enemies);
 
         player = new Player(game.batch);
 
@@ -90,8 +77,8 @@ public class GoosePatrolScreen extends GameScreen {
 
         ArrayList<HiddenEvent> events = new ArrayList<>();
 
-        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), -2, -1, 1, 1));
-        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), -2, 1, 1, 1));
+        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), new Vector2(-2, -1), 0.5f));
+        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), new Vector2(-2, 1), 0.5f));
 
         hiddenEventManager = new HiddenEventManager(events);
     }
@@ -150,12 +137,14 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Set the game screen to the appropriate win/loss if a win/loss condition is met. Otherwise, do nothing.
+     * Set the game screen to the appropriate win/loss screen if a win/loss condition is met. Otherwise, do nothing.
      */
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
         if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT_MILLIS)
+            gameWon = true;
+        if (waveManager.isFinished() && enemies.isEmpty())
             gameWon = true;
 
         if (gameLost)
