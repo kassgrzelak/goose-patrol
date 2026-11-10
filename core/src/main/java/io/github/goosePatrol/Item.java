@@ -1,12 +1,20 @@
 package io.github.goosePatrol;
 
+import com.badlogic.gdx.graphics.Texture;
+
 /**
- * Interface representing a basic item.
+ * Abstract class representing a basic item.
  */
-public interface Item {
+public abstract class Item {
+    public final Texture texture;
+
+    public Item(Texture texture) {
+        this.texture = texture;
+    }
+
     /**
-     * Perform whatever action the Item does, only if whatever internal value (cooldown timer, use count, etc.) is
+     * Perform whatever action the Item does only if whatever internal value (cooldown timer, use count, etc.) is
      * valid. If not, this method does nothing.
      */
-    void useIfPossible();
+    public abstract void useIfPossible();
 }

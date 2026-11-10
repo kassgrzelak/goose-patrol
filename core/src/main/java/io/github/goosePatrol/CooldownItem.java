@@ -1,15 +1,17 @@
 package io.github.goosePatrol;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.TimeUtils;
 
 /**
  * Abstract class for an item with unlimited uses but with a cooldown between each use.
  */
-public abstract class CooldownItem implements Item {
+public abstract class CooldownItem extends Item {
     private final long cooldownDurationMillis;
     private long lastUseTime = -999999;
 
-    public CooldownItem(long cooldownDurationMillis) {
+    public CooldownItem(Texture texture, long cooldownDurationMillis) {
+        super(texture);
         this.cooldownDurationMillis = cooldownDurationMillis;
     }
 

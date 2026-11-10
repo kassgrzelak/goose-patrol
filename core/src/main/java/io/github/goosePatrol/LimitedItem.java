@@ -1,9 +1,12 @@
 package io.github.goosePatrol;
 
-public abstract class LimitedItem implements Item {
+import com.badlogic.gdx.graphics.Texture;
+
+public abstract class LimitedItem extends Item {
     private int remainingUses;
 
-    public LimitedItem(int initialUses) {
+    public LimitedItem(Texture texture, int initialUses) {
+        super(texture);
         remainingUses = initialUses;
     }
 

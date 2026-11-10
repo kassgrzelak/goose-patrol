@@ -11,18 +11,16 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
  */
 public class MainMenuScreen extends GameScreen {
     private final ScreenViewport viewport;
-    private final GlyphLayout layout;
 
     public MainMenuScreen(Main game) {
         super(game);
         viewport = new ScreenViewport();
-        layout = new GlyphLayout();
     }
 
     @Override
     protected void update(float delta)
     {
-        if (Gdx.input.isTouched())
+        if (Gdx.input.justTouched())
             game.setScreen(new GoosePatrolScreen(game));
     }
 
@@ -33,9 +31,7 @@ public class MainMenuScreen extends GameScreen {
         viewport.apply();
         game.batch.begin();
 
-        layout.setText(game.font, "Click to start");
-        game.font.draw(game.batch, "Click to start", viewport.getScreenWidth() / 2f - layout.width / 2,
-                viewport.getScreenHeight() / 2f - layout.height / 2);
+        game.drawTextCentered(viewport, "Click to start", 0, 0);
 
         game.batch.end();
     }

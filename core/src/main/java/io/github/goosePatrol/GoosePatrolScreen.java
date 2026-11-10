@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -62,6 +64,13 @@ public class GoosePatrolScreen extends GameScreen {
     private float timeSpentPaused = 0;
 
     private final ShapeRenderer shapeRenderer;
+
+    private static final Color PAUSE_BACKGROUND_COLOR = new Color(0.6f, 0.8f, 1.0f, 1.0f);
+    private static final Color BUTTON_COLOR = new Color(0.5f, 0.9f, 0.4f, 1.0f);
+
+    private Rectangle resumeRect = new Rectangle();
+    private Rectangle restartRect = new Rectangle();
+    private Rectangle quitRect = new Rectangle();
 
     public GoosePatrolScreen(Main game) {
         super(game);
@@ -228,6 +237,20 @@ public class GoosePatrolScreen extends GameScreen {
             else
                 pauseGame();
         }
+
+        if (paused) {
+            // Convert from left-handed coordinate system used by Gdx.input.
+            Vector2 mousePosition = new Vector2(Gdx.input.getX(), uiViewport.getScreenHeight() - Gdx.input.getY());
+
+            if (Gdx.input.justTouched()) {
+                if (resumeRect.contains(mousePosition))
+                    unpauseGame();
+                else if (restartRect.contains(mousePosition))
+                    game.setScreen(new GoosePatrolScreen(game));
+                else if (quitRect.contains(mousePosition))
+                    game.setScreen(new MainMenuScreen(game));
+            }
+        }
     }
 
     @Override
@@ -283,18 +306,26 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Draw a rectangle where (x,y) is the position of its center, and the coordinate space has (0,0) in the middle of
+     * Get a rectangle where (x,y) is the position of its center, and the coordinate space has (0,0) in the middle of
      * the screen.
      * @param x x-coordinate of the center.
      * @param y y-coordinate of the center.
      * @param width Width of the rectangle.
      * @param height Height of the rectangle.
      */
-    private void drawRectCentered(float x, float y, float width, float height) {
+    private Rectangle getRectCentered(float x, float y, float width, float height) {
         final float rectX = uiViewport.getScreenWidth() / 2.0f + x - width / 2;
         final float rectY = uiViewport.getScreenHeight() / 2.0f + y - height / 2;
 
-        shapeRenderer.rect(rectX, rectY, width, height);
+        return new Rectangle(rectX, rectY, width, height);
+    }
+
+    /**
+     * Draw a retangle.
+     * @param rect The rectangle to draw.
+     */
+    private void drawRectangle(Rectangle rect) {
+        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
     }
 
     /**
@@ -306,13 +337,32 @@ public class GoosePatrolScreen extends GameScreen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.setColor(new Color(0.737f, 0.957f, 1.0f, 1.0f));
+        shapeRenderer.setColor(PAUSE_BACKGROUND_COLOR);
         shapeRenderer.rect(0, 0, uiViewport.getScreenWidth(), uiViewport.getScreenHeight());
 
-        shapeRenderer.setColor(Color.BLACK);
-        drawRectCentered(0, 300, 400, 100);
+        shapeRenderer.setColor(BUTTON_COLOR);
+        resumeRect = getRectCentered(0, 150, 400, 100);
+        drawRectangle(resumeRect);
+
+        shapeRenderer.setColor(BUTTON_COLOR);
+        restartRect = getRectCentered(0, 0, 400, 100);
+        drawRectangle(restartRect);
+
+        shapeRenderer.setColor(BUTTON_COLOR);
+        quitRect = getRectCentered(0, -150, 400, 100);
+        drawRectangle(quitRect);
 
         shapeRenderer.end();
+
+        game.batch.begin();
+        game.font.setColor(Color.BLACK);
+
+        game.drawTextCentered(uiViewport, "Resume", 0, 150);
+        game.drawTextCentered(uiViewport, "Restart", 0, 0);
+        game.drawTextCentered(uiViewport, "Quit", 0, -150);
+
+        game.font.setColor(Color.WHITE);
+        game.batch.end();
     }
 
     /**
