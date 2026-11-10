@@ -22,6 +22,7 @@ public class Player extends SpriteEntity {
 
     private final Vector2 velocity;
 
+    private final GameTime time;
     private long timeOfLastHit = -999999;
 
     private static final float PLAYER_SPEED = 5;
@@ -35,12 +36,14 @@ public class Player extends SpriteEntity {
 
     private final ArrayList<Effect> activeEffects = new ArrayList<>();
 
-    public Player(SpriteBatch batch) {
+    public Player(SpriteBatch batch, GameTime time) {
         super(new Sprite(new Texture("player.jpg")), batch);
         sprite.setSize(1, 1);
         sprite.setPosition(-0.5f, -0.5f); // Player starts at (0,0), this centers them.
 
         velocity = new Vector2(0, 0);
+
+        this.time = time;
     }
 
     /**
@@ -112,7 +115,7 @@ public class Player extends SpriteEntity {
      * @return true if the hit cooldown period has passed, false otherwise.
      */
     private boolean canBeHit() {
-        return TimeUtils.timeSinceMillis(timeOfLastHit) > PLAYER_HIT_COOLDOWN_MILLIS;
+        return time.getTimeMillis() - timeOfLastHit > PLAYER_HIT_COOLDOWN_MILLIS;
     }
 
     /**
@@ -124,7 +127,7 @@ public class Player extends SpriteEntity {
             return;
 
         health -= damage;
-        timeOfLastHit = TimeUtils.millis();
+        timeOfLastHit = time.getTimeMillis();
     }
 
     /**

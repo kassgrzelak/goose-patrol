@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -61,7 +60,6 @@ public class GoosePatrolScreen extends GameScreen {
     private final WaveManager waveManager;
 
     private boolean paused = false;
-    private float timeSpentPaused = 0;
 
     private final ShapeRenderer shapeRenderer;
 
@@ -72,6 +70,8 @@ public class GoosePatrolScreen extends GameScreen {
     private Rectangle restartRect = new Rectangle();
     private Rectangle quitRect = new Rectangle();
 
+    private final GameTime time = new GameTime();
+
     public GoosePatrolScreen(Main game) {
         super(game);
 
@@ -80,9 +80,9 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        waveManager = WaveManager.getGameWaveManager(game.batch, enemies);
+        waveManager = WaveManager.getGameWaveManager(game.batch, enemies, time);
 
-        player = new Player(game.batch);
+        player = new Player(game.batch, time);
 
         background = new Sprite(new Texture("bg.jpg"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
@@ -172,15 +172,15 @@ public class GoosePatrolScreen extends GameScreen {
      * @return true if the player is out of time and the game is not paused.
      */
     private boolean outOfTime() {
-        return getTimeRemaining() > GAME_TIME_LIMIT_MILLIS && !paused;
+        return getTimeElapsed() > GAME_TIME_LIMIT_MILLIS && !paused;
     }
 
     /**
-     * Get the amount of time remaining, accounting for time spent paused.
+     * Get the amount of time elapsed, accounting for time spent paused.
      * @return The time remaining.
      */
-    private long getTimeRemaining() {
-        return TimeUtils.timeSinceMillis(timeStarted) - (long)timeSpentPaused;
+    private long getTimeElapsed() {
+        return time.getTimeMillis() - timeStarted;
     }
 
     /**
@@ -202,7 +202,8 @@ public class GoosePatrolScreen extends GameScreen {
 
     @Override
     protected void update(float delta) {
-        timeSpentPaused += delta;
+        if (paused)
+            time.addTimePaused(delta);
 
         handleInput(delta);
 
@@ -298,7 +299,7 @@ public class GoosePatrolScreen extends GameScreen {
      * Draw the timer UI.
      */
     private void drawTimer() {
-        final long timeElapsed = getTimeRemaining() / 1000;
+        final long timeElapsed = getTimeElapsed() / 1000;
         final long minutes = timeElapsed / 60;
         final long seconds = timeElapsed % 60;
         final String timeString = String.format("%02d:%02d", minutes, seconds);

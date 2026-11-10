@@ -10,10 +10,12 @@ import java.util.ArrayList;
 public class Wave {
     private final ArrayList<Enemy> enemies;
     private final long durationMillis;
+    private final GameTime time;
     private long endTime = -999999;
 
-    public Wave(ArrayList<Enemy> enemies, long durationMillis) {
+    public Wave(ArrayList<Enemy> enemies, GameTime time, long durationMillis) {
         this.enemies = enemies;
+        this.time = time;
         this.durationMillis = durationMillis;
     }
 
@@ -23,7 +25,7 @@ public class Wave {
      */
     public void startWave(ArrayList<Enemy> enemies) {
         enemies.addAll(this.enemies);
-        endTime = TimeUtils.millis() + durationMillis;
+        endTime = time.getTimeMillis() + durationMillis;
     }
 
     /**
@@ -31,6 +33,6 @@ public class Wave {
      * @return true if the wave's end time has passed, false otherwise.
      */
     public boolean isFinished() {
-        return TimeUtils.millis() >= endTime;
+        return time.getTimeMillis() >= endTime;
     }
 }
