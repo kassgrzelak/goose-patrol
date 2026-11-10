@@ -1,23 +1,33 @@
 package io.github.goosePatrol;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Abstract class for a hidden event which triggers upon the player colliding with it.
  */
 public abstract class HiddenEvent {
-    private final Rectangle bounds;
+    private final Vector2 center;
+    private final float radius;
     private boolean triggered = false;
 
-    public HiddenEvent(float x, float y, float width, float height) {
-        this.bounds = new Rectangle(x - width / 2, y - height / 2, width, height);
+    public HiddenEvent(Vector2 center, float radius) {
+        this.center = center.cpy();
+        this.radius = radius;
     }
 
     /**
-     * Get the bounds of the event for collision detection.
-     * @return The bounds of the event.
+     * Get the event's center.
+     * @return The event's center.
      */
-    public Rectangle getBounds() {
-        return bounds;
+    public Vector2 getCenter() {
+        return center.cpy();
+    }
+
+    /**
+     * Get the event's radius.
+     * @return The event's radius.
+     */
+    public float getRadius() {
+        return radius;
     }
 
     /**

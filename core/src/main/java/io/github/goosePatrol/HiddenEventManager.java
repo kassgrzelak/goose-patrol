@@ -24,24 +24,25 @@ public class HiddenEventManager {
      */
     public void checkEventCollision(Player player) {
         for (HiddenEvent event : events) {
-            Vector2 eventCenter = new Vector2();
-            event.getBounds().getCenter(eventCenter);
+            Vector2 eventCenter = event.getCenter();
+            final float minDist = player.getRadius() + event.getRadius();
+            final float dist = eventCenter.cpy().dst(player.getPosition());
+            final float intrusionDepth = minDist - dist;
 
-            if ()
+            if (intrusionDepth > 0)
                 event.trigger();
         }
     }
 
     /**
-     * Temporary function to draw events as red boxes to the screen.
+     * Temporary function to draw events as red circles to the screen.
      */
     public void debugDrawEvents(Matrix4 matrix) {
         shapeRenderer.setProjectionMatrix(matrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
         for (HiddenEvent event : events) {
-            shapeRenderer.rect(event.getBounds().x, event.getBounds().y,
-                    event.getBounds().width, event.getBounds().height,
-                    Color.RED, Color.RED, Color.RED, Color.RED);
+            shapeRenderer.circle(event.getCenter().x, event.getCenter().y, event.getRadius());
         }
         shapeRenderer.end();
     }
