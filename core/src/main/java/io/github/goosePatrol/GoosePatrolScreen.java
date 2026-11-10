@@ -75,12 +75,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         timeStarted = TimeUtils.millis();
 
-        ArrayList<HiddenEvent> events = new ArrayList<>();
-
-        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), new Vector2(-2, -1), 0.5f));
-        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), new Vector2(-2, 1), 0.5f));
-
-        hiddenEventManager = new HiddenEventManager(events);
+        hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(player);
     }
 
     /**

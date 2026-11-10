@@ -46,4 +46,13 @@ public class HiddenEventManager {
         }
         shapeRenderer.end();
     }
+
+    public static HiddenEventManager getGameHiddenEventManager(Player player) {
+        ArrayList<HiddenEvent> events = new ArrayList<>();
+
+        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), new Vector2(-2, -1), 0.5f));
+        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), new Vector2(-2, 1), 0.5f));
+
+        return new HiddenEventManager(events);
+    }
 }
