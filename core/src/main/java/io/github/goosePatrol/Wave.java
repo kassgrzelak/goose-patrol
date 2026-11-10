@@ -1,7 +1,4 @@
 package io.github.goosePatrol;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
@@ -33,7 +30,7 @@ public class Wave {
      * Get whether the wave has finished or not.
      * @return true if the wave's end time has passed, false otherwise.
      */
-    public boolean finished() {
+    public boolean isFinished() {
         return TimeUtils.millis() >= endTime;
     }
 }

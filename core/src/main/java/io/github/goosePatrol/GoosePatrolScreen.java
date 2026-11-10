@@ -49,7 +49,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final Sprite background;
 
-    private long timeStarted = 0;
+    private final long timeStarted;
 
     private boolean gameLost = false;
     private boolean gameWon = false;
@@ -156,6 +156,8 @@ public class GoosePatrolScreen extends GameScreen {
         if (player.isUnconscious())
             gameLost = true;
         if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT_MILLIS)
+            gameWon = true;
+        if (waveManager.isFinished() && enemies.isEmpty())
             gameWon = true;
 
         if (gameLost)
