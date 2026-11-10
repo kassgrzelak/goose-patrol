@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -57,6 +58,11 @@ public class GoosePatrolScreen extends GameScreen {
     private final HiddenEventManager hiddenEventManager;
     private final WaveManager waveManager;
 
+    private boolean paused = false;
+    private float timeSpentPaused = 0;
+
+    private final ShapeRenderer shapeRenderer;
+
     public GoosePatrolScreen(Main game) {
         super(game);
 
@@ -76,6 +82,8 @@ public class GoosePatrolScreen extends GameScreen {
         timeStarted = TimeUtils.millis();
 
         hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(player);
+
+        shapeRenderer = new ShapeRenderer();
     }
 
     /**
@@ -131,13 +139,48 @@ public class GoosePatrolScreen extends GameScreen {
         }
     }
 
+    @Override
+    public void pause() {
+        pauseGame();
+    }
+
+    /**
+     * Pause the game.
+     */
+    private void pauseGame() {
+        paused = true;
+    }
+
+    /**
+     * Unpause the game.
+     */
+    private void unpauseGame() {
+        paused = false;
+    }
+
+    /**
+     * Get whether the player is out of time or not.
+     * @return true if the player is out of time and the game is not paused.
+     */
+    private boolean outOfTime() {
+        return getTimeRemaining() > GAME_TIME_LIMIT_MILLIS && !paused;
+    }
+
+    /**
+     * Get the amount of time remaining, accounting for time spent paused.
+     * @return The time remaining.
+     */
+    private long getTimeRemaining() {
+        return TimeUtils.timeSinceMillis(timeStarted) - (long)timeSpentPaused;
+    }
+
     /**
      * Set the game screen to the appropriate win/loss screen if a win/loss condition is met. Otherwise, do nothing.
      */
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
-        if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT_MILLIS)
+        if (outOfTime())
             gameWon = true;
         if (waveManager.isFinished() && enemies.isEmpty())
             gameWon = true;
@@ -150,14 +193,19 @@ public class GoosePatrolScreen extends GameScreen {
 
     @Override
     protected void update(float delta) {
+        timeSpentPaused += delta;
+
+        handleInput(delta);
+
+        if (paused)
+            return;
+
         if (enemies.isEmpty())
             waveManager.forceNextWave();
         else
             waveManager.startNextWaveIfPossible();
 
         checkWinLossConditions();
-
-        handleInput(delta);
 
         player.update(delta);
         camera.update(delta, player.getPosition());
@@ -174,8 +222,12 @@ public class GoosePatrolScreen extends GameScreen {
      * @param delta Time passed since the last frame, in seconds.
      */
     private void handleInput(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-            Gdx.app.exit(); // Temporary for testing.
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (paused)
+                unpauseGame();
+            else
+                pauseGame();
+        }
     }
 
     @Override
@@ -188,6 +240,7 @@ public class GoosePatrolScreen extends GameScreen {
         game.batch.end();
 
         hiddenEventManager.debugDrawEvents(camera.getCamera().combined);
+        drawPauseScreen();
     }
 
     /**
@@ -222,11 +275,44 @@ public class GoosePatrolScreen extends GameScreen {
      * Draw the timer UI.
      */
     private void drawTimer() {
-        final long timeElapsed = TimeUtils.timeSinceMillis(timeStarted) / 1000;
+        final long timeElapsed = getTimeRemaining() / 1000;
         final long minutes = timeElapsed / 60;
         final long seconds = timeElapsed % 60;
         final String timeString = String.format("%02d:%02d", minutes, seconds);
         game.font.draw(game.batch, timeString, 5, 60);
+    }
+
+    /**
+     * Draw a rectangle where (x,y) is the position of its center, and the coordinate space has (0,0) in the middle of
+     * the screen.
+     * @param x x-coordinate of the center.
+     * @param y y-coordinate of the center.
+     * @param width Width of the rectangle.
+     * @param height Height of the rectangle.
+     */
+    private void drawRectCentered(float x, float y, float width, float height) {
+        final float rectX = uiViewport.getScreenWidth() / 2.0f + x - width / 2;
+        final float rectY = uiViewport.getScreenHeight() / 2.0f + y - height / 2;
+
+        shapeRenderer.rect(rectX, rectY, width, height);
+    }
+
+    /**
+     * Draw the pause screen.
+     */
+    private void drawPauseScreen() {
+        if (!paused)
+            return;
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        shapeRenderer.setColor(new Color(0.737f, 0.957f, 1.0f, 1.0f));
+        shapeRenderer.rect(0, 0, uiViewport.getScreenWidth(), uiViewport.getScreenHeight());
+
+        shapeRenderer.setColor(Color.BLACK);
+        drawRectCentered(0, 300, 400, 100);
+
+        shapeRenderer.end();
     }
 
     /**
