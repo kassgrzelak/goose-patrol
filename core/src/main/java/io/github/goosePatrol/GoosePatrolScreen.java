@@ -65,20 +65,7 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-
-        ArrayList<Wave> waves = new ArrayList<>();
-
-        ArrayList<Enemy> wave1 = new ArrayList<>();
-        wave1.add(new BasicGoose(game.batch, new Vector2(5, 5)));
-        wave1.add(new BasicGoose(game.batch, new Vector2(5, -5)));
-        waves.add(new Wave(wave1, 5000));
-
-        ArrayList<Enemy> wave2 = new ArrayList<>();
-        wave2.add(new BasicGoose(game.batch, new Vector2(-5, 5)));
-        wave2.add(new BasicGoose(game.batch, new Vector2(-5, -5)));
-        waves.add(new Wave(wave2, 5000));
-
-        waveManager = new WaveManager(waves, enemies);
+        waveManager = WaveManager.getGameWaveManager(game.batch, enemies);
 
         player = new Player(game.batch);
 
@@ -150,7 +137,7 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Set the game screen to the appropriate win/loss if a win/loss condition is met. Otherwise, do nothing.
+     * Set the game screen to the appropriate win/loss screen if a win/loss condition is met. Otherwise, do nothing.
      */
     private void checkWinLossConditions() {
         if (player.isUnconscious())

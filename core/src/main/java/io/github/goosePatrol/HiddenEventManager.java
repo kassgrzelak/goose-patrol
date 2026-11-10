@@ -2,6 +2,7 @@ package io.github.goosePatrol;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,13 @@ public class HiddenEventManager {
      * @param player The player to check collision with.
      */
     public void checkEventCollision(Player player) {
-        for (HiddenEvent event : events)
-            if(event.getBounds().contains(player.getX(), player.getY()))
+        for (HiddenEvent event : events) {
+            Vector2 eventCenter = new Vector2();
+            event.getBounds().getCenter(eventCenter);
+
+            if ()
                 event.trigger();
+        }
     }
 
     /**
