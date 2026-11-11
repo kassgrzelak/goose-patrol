@@ -28,19 +28,6 @@ public class GoosePatrolScreen extends GameScreen {
 
     private static final long GAME_TIME_LIMIT_MILLIS = 5 * 60 * 1000;
 
-    /**
-     * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
-     * values lead to the player easily walking through hordes of enemies, while lower values cause the player to become
-     * more easily surrounded.
-     * <p>
-     * PLAYER_PUSH_STRENGTH = 0.0f -> The player cannot push enemies away at all.
-     * <p>
-     * PLAYER_PUSH_STRENGTH = 0.5f -> The player is pushed by enemies as much as the player can push enemies back.
-     * <p>
-     * PLAYER_PUSH_STRENGTH = 1.0f -> The player is not pushed by enemies at all.
-     */
-    private static final float PLAYER_PUSH_STRENGTH = 0.8f;
-
     private final ExtendViewport mainViewport;
     private final GameCamera camera;
     private final ScreenViewport uiViewport;
@@ -140,7 +127,7 @@ public class GoosePatrolScreen extends GameScreen {
         // Resolve enemy-player collisions.
         for (Enemy enemy : enemies) {
             // Make player take damage if there is a collision and hit cooldown period has passed.
-            if (resolveCollision(enemy, player, PLAYER_PUSH_STRENGTH))
+            if (resolveCollision(enemy, player, Player.PLAYER_PUSH_STRENGTH))
                 player.takeDamage(enemy.getDamage());
         }
     }
