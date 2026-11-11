@@ -52,7 +52,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private Rectangle resumeRect = new Rectangle();
     private Rectangle restartRect = new Rectangle();
-    private Rectangle quitRect = new Rectangle();
+    private Rectangle mainMenuRect = new Rectangle();
 
     private final GameTime time = new GameTime();
 
@@ -223,18 +223,15 @@ public class GoosePatrolScreen extends GameScreen {
                 pauseGame();
         }
 
-        if (paused) {
-            // Convert from left-handed coordinate system used by Gdx.input.
-            Vector2 mousePosition = new Vector2(Gdx.input.getX(), uiViewport.getScreenHeight() - Gdx.input.getY());
+        if (paused && Gdx.input.justTouched()) {
+            final Vector2 mousePosition = getMousePosition(uiViewport);
 
-            if (Gdx.input.justTouched()) {
-                if (resumeRect.contains(mousePosition))
-                    unpauseGame();
-                else if (restartRect.contains(mousePosition))
-                    game.setScreen(new GoosePatrolScreen(game));
-                else if (quitRect.contains(mousePosition))
-                    game.setScreen(new MainMenuScreen(game));
-            }
+            if (resumeRect.contains(mousePosition))
+                unpauseGame();
+            else if (restartRect.contains(mousePosition))
+                game.setScreen(new GoosePatrolScreen(game));
+            else if (mainMenuRect.contains(mousePosition))
+                game.setScreen(new MainMenuScreen(game));
         }
     }
 
@@ -312,20 +309,22 @@ public class GoosePatrolScreen extends GameScreen {
         drawRectangle(shapeRenderer, restartRect);
 
         shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
-        quitRect = getRectCentered(uiViewport, 0, -150, 400, 100);
-        drawRectangle(shapeRenderer, quitRect);
+        mainMenuRect = getRectCentered(uiViewport, 0, -150, 400, 100);
+        drawRectangle(shapeRenderer, mainMenuRect);
 
         shapeRenderer.end();
 
         game.batch.begin();
-        game.font.setColor(Color.BLACK);
 
         game.drawTextCentered(uiViewport, "Resume", 0, 150);
         game.drawTextCentered(uiViewport, "Restart", 0, 0);
-        game.drawTextCentered(uiViewport, "Quit", 0, -150);
+        game.drawTextCentered(uiViewport, "Return to Main Menu", 0, -150);
 
-        game.font.setColor(Color.WHITE);
         game.batch.end();
+    }
+
+    private void drawEventsTriggered() {
+        game.font.draw(game.batch, "Events triggered: " + hiddenEventManager.getEventsTriggered(), 5, 90);
     }
 
     /**
@@ -336,6 +335,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         drawHealth();
         drawTimer();
+        drawEventsTriggered();
     }
 
     /**

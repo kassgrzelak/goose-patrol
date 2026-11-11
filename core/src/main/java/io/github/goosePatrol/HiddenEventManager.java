@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class HiddenEventManager {
     private final ArrayList<HiddenEvent> events;
     private final ShapeRenderer shapeRenderer;
+    public int eventsTriggered = 0;
 
     public HiddenEventManager(ArrayList<HiddenEvent> events) {
         this.events = events;
@@ -29,9 +30,17 @@ public class HiddenEventManager {
             final float dist = eventCenter.cpy().dst(player.getPosition());
             final float intrusionDepth = minDist - dist;
 
-            if (intrusionDepth > 0)
-                event.trigger();
+            if (intrusionDepth > 0 && event.trigger())
+                eventsTriggered++;
         }
+    }
+
+    /**
+     * Get the number of events triggered.
+     * @return The number of events triggered since creation.
+     */
+    public int getEventsTriggered() {
+        return eventsTriggered;
     }
 
     /**
@@ -42,7 +51,7 @@ public class HiddenEventManager {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.RED);
         for (HiddenEvent event : events) {
-            shapeRenderer.circle(event.getCenter().x, event.getCenter().y, event.getRadius());
+            shapeRenderer.circle(event.getCenter().x, event.getCenter().y, event.getRadius(), 12);
         }
         shapeRenderer.end();
     }

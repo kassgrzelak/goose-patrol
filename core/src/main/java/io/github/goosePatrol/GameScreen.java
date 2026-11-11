@@ -1,8 +1,10 @@
 package io.github.goosePatrol;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -62,5 +64,15 @@ public abstract class GameScreen extends ScreenAdapter
      */
     protected static void drawRectangle(ShapeRenderer shapeRenderer, Rectangle rect) {
         shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+    }
+
+    /**
+     * Get the current position of the mouse as a Vector2.
+     * @param viewport A viewport. Used to get the screen height for coordinate conversion.
+     * @return A Vector2 containing the current position of the mouse.
+     */
+    protected static Vector2 getMousePosition(Viewport viewport) {
+        // Convert from left-handed coordinate system used by Gdx.input.
+        return new Vector2(Gdx.input.getX(), viewport.getScreenHeight() - Gdx.input.getY());
     }
 }
