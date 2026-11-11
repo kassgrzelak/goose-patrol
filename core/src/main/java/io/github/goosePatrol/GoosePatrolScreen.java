@@ -63,9 +63,6 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final ShapeRenderer shapeRenderer;
 
-    private static final Color PAUSE_BACKGROUND_COLOR = new Color(0.6f, 0.8f, 1.0f, 1.0f);
-    private static final Color BUTTON_COLOR = new Color(0.5f, 0.9f, 0.4f, 1.0f);
-
     private Rectangle resumeRect = new Rectangle();
     private Rectangle restartRect = new Rectangle();
     private Rectangle quitRect = new Rectangle();
@@ -307,51 +304,29 @@ public class GoosePatrolScreen extends GameScreen {
     }
 
     /**
-     * Get a rectangle where (x,y) is the position of its center, and the coordinate space has (0,0) in the middle of
-     * the screen.
-     * @param x x-coordinate of the center.
-     * @param y y-coordinate of the center.
-     * @param width Width of the rectangle.
-     * @param height Height of the rectangle.
-     */
-    private Rectangle getRectCentered(float x, float y, float width, float height) {
-        final float rectX = uiViewport.getScreenWidth() / 2.0f + x - width / 2;
-        final float rectY = uiViewport.getScreenHeight() / 2.0f + y - height / 2;
-
-        return new Rectangle(rectX, rectY, width, height);
-    }
-
-    /**
-     * Draw a retangle.
-     * @param rect The rectangle to draw.
-     */
-    private void drawRectangle(Rectangle rect) {
-        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-    }
-
-    /**
      * Draw the pause screen.
      */
     private void drawPauseScreen() {
         if (!paused)
             return;
 
+        shapeRenderer.setProjectionMatrix(uiViewport.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.setColor(PAUSE_BACKGROUND_COLOR);
+        shapeRenderer.setColor(GameConstants.BACKGROUND_COLOR);
         shapeRenderer.rect(0, 0, uiViewport.getScreenWidth(), uiViewport.getScreenHeight());
 
-        shapeRenderer.setColor(BUTTON_COLOR);
-        resumeRect = getRectCentered(0, 150, 400, 100);
-        drawRectangle(resumeRect);
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        resumeRect = getRectCentered(uiViewport, 0, 150, 400, 100);
+        drawRectangle(shapeRenderer, resumeRect);
 
-        shapeRenderer.setColor(BUTTON_COLOR);
-        restartRect = getRectCentered(0, 0, 400, 100);
-        drawRectangle(restartRect);
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        restartRect = getRectCentered(uiViewport, 0, 0, 400, 100);
+        drawRectangle(shapeRenderer, restartRect);
 
-        shapeRenderer.setColor(BUTTON_COLOR);
-        quitRect = getRectCentered(0, -150, 400, 100);
-        drawRectangle(quitRect);
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        quitRect = getRectCentered(uiViewport, 0, -150, 400, 100);
+        drawRectangle(shapeRenderer, quitRect);
 
         shapeRenderer.end();
 

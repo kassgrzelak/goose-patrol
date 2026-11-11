@@ -1,8 +1,9 @@
 package io.github.goosePatrol;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -11,10 +12,15 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
  */
 public class MainMenuScreen extends GameScreen {
     private final ScreenViewport viewport;
+    private final ShapeRenderer shapeRenderer;
+
+    private Rectangle startRect = new Rectangle();
+    private Rectangle quitRect = new Rectangle();
 
     public MainMenuScreen(Main game) {
         super(game);
         viewport = new ScreenViewport();
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -27,13 +33,19 @@ public class MainMenuScreen extends GameScreen {
     @Override
     protected void draw()
     {
-        ScreenUtils.clear(Color.BLACK);
+        ScreenUtils.clear(GameConstants.BACKGROUND_COLOR);
         viewport.apply();
-        game.batch.begin();
 
-        game.drawTextCentered(viewport, "Click to start", 0, 0);
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
 
-        game.batch.end();
+        startRect = getRectCentered(viewport, 0, -200, 400, 100);
+        drawRectangle(shapeRenderer, startRect);
+
+
+
+        shapeRenderer.end();
     }
 
     @Override
