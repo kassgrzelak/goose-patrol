@@ -28,6 +28,19 @@ public class Player extends SpriteEntity {
     private static final float PLAYER_ACCEL = 10;
     private static final long PLAYER_HIT_COOLDOWN_MILLIS = 1000;
 
+    /**
+     * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
+     * values lead to the player easily walking through hordes of enemies, while lower values cause the player to become
+     * more easily surrounded.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.0f -> The player cannot push enemies away at all.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 0.5f -> The player is pushed by enemies as much as the player can push enemies back.
+     * <p>
+     * PLAYER_PUSH_STRENGTH = 1.0f -> The player is not pushed by enemies at all.
+     */
+    public static final float PLAYER_PUSH_STRENGTH = 0.8f;
+
     private static final float PLAYER_MIN_SPEED_MULTIPLIER = 0.1f;
     private static final float PLAYER_MAX_SPEED_MULTIPLIER = 2.0f;
 
