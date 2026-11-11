@@ -8,10 +8,12 @@ import com.badlogic.gdx.math.Vector2;
  * Base class for enemies. Implementors must override update(), which determines how the enemy behaves in-game.
  */
 public abstract class Enemy extends SpriteEntity {
+    private int health;
     private final int damage;
 
-    Enemy(int damage, Sprite sprite, Batch batch) {
+    Enemy(int health, int damage, Sprite sprite, Batch batch) {
         super(sprite, batch);
+        this.health = health;
         this.damage = damage;
     }
 
@@ -21,6 +23,22 @@ public abstract class Enemy extends SpriteEntity {
      */
     public int getDamage() {
         return damage;
+    }
+
+    /**
+     * Get whether the enemy is unconscious or not.
+     * @return true if the enemy's health is <= 0, false otherwise.
+     */
+    public boolean isUnconscious() {
+        return health <= 0;
+    }
+
+    /**
+     * Make the enemy take damage.
+     * @param amount The amount of damage to take.
+     */
+    public void takeDamage(int amount) {
+        health -= amount;
     }
 
     /**

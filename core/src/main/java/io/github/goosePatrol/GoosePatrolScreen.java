@@ -56,6 +56,10 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final GameTime time = new GameTime();
 
+    private final ItemManager itemManager;
+
+    private final ArrayList<Projectile> projectiles = new ArrayList<>();
+
     public GoosePatrolScreen(Main game) {
         super(game);
 
@@ -77,6 +81,8 @@ public class GoosePatrolScreen extends GameScreen {
         hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(time, player);
 
         shapeRenderer = new ShapeRenderer();
+
+        itemManager = ItemManager.getGameItemManager(time, uiViewport, player, projectiles);
     }
 
     /**
@@ -184,6 +190,26 @@ public class GoosePatrolScreen extends GameScreen {
             game.setScreen(new WinScreen(game));
     }
 
+    private void checkProjectileCollisions() {
+        final ArrayList<Projectile> projectilesToDelete = new ArrayList<>();
+        final ArrayList<Enemy> enemiesToDelete = new ArrayList<>();
+
+        for (Projectile projectile : projectiles)
+            for (Enemy enemy : enemies)
+                if (projectile.getPosition().dst(enemy.getPosition()) < projectile.getRadius() + enemy.getRadius()) {
+                    enemy.takeDamage(projectile.damage);
+                    projectilesToDelete.add(projectile);
+
+                    if (enemy.isUnconscious())
+                        enemiesToDelete.add(enemy);
+                }
+
+        for (Projectile projectile : projectilesToDelete)
+            projectiles.remove(projectile);
+        for (Enemy enemy : enemiesToDelete)
+            enemies.remove(enemy);
+    }
+
     @Override
     protected void update(float delta) {
         if (paused)
@@ -201,6 +227,9 @@ public class GoosePatrolScreen extends GameScreen {
 
         checkWinLossConditions();
 
+        for (Projectile projectile : projectiles)
+            projectile.update(delta);
+
         player.update(delta);
         camera.update(delta, player.getPosition());
 
@@ -209,6 +238,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         resolveCollisions();
         hiddenEventManager.checkEventCollision(player);
+        checkProjectileCollisions();
     }
 
     /**
@@ -233,6 +263,14 @@ public class GoosePatrolScreen extends GameScreen {
             else if (mainMenuRect.contains(mousePosition))
                 game.setScreen(new MainMenuScreen(game));
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q))
+            itemManager.moveSelectedUp();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E))
+            itemManager.moveSelectedDown();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            itemManager.useSelected();
     }
 
     @Override
@@ -258,6 +296,9 @@ public class GoosePatrolScreen extends GameScreen {
 
         for (Enemy enemy : enemies)
             enemy.draw();
+
+        for (Projectile projectile : projectiles)
+            projectile.draw(game.batch);
 
         player.draw();
     }
@@ -327,6 +368,10 @@ public class GoosePatrolScreen extends GameScreen {
         game.font.draw(game.batch, "Events triggered: " + hiddenEventManager.getEventsTriggered(), 5, 90);
     }
 
+    private void drawItems() {
+        itemManager.draw(game.batch);
+    }
+
     /**
      * Draw UI elements.
      */
@@ -336,6 +381,7 @@ public class GoosePatrolScreen extends GameScreen {
         drawHealth();
         drawTimer();
         drawEventsTriggered();
+        drawItems();
     }
 
     /**

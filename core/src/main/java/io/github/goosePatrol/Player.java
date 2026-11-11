@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 
@@ -141,6 +140,15 @@ public class Player extends SpriteEntity {
 
         health -= damage;
         timeOfLastHit = time.getTimeMillis();
+    }
+
+    /**
+     * Add health to the player. This method will not take the player's health above 100.
+     * @param amount The amount to heal by.
+     */
+    public void addHealth(int amount) {
+        health += amount;
+        health = MathUtils.clamp(health, 0, 100);
     }
 
     /**

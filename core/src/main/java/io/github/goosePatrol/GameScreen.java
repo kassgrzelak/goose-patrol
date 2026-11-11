@@ -71,7 +71,7 @@ public abstract class GameScreen extends ScreenAdapter
      * @param viewport A viewport. Used to get the screen height for coordinate conversion.
      * @return A Vector2 containing the current position of the mouse.
      */
-    protected static Vector2 getMousePosition(Viewport viewport) {
+    public static Vector2 getMousePosition(Viewport viewport) {
         // Convert from left-handed coordinate system used by Gdx.input.
         return new Vector2(Gdx.input.getX(), viewport.getScreenHeight() - Gdx.input.getY());
     }
