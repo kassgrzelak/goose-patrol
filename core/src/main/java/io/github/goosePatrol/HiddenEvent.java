@@ -31,7 +31,7 @@ public abstract class HiddenEvent {
     }
 
     /**
-     * Trigger the even. This does nothing if the event has already been triggered.
+     * Trigger the evenr. This does nothing if the event has already been triggered.
      */
     public void trigger() {
         if (triggered)

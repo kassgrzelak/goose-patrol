@@ -90,7 +90,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         timeStarted = TimeUtils.millis();
 
-        hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(player);
+        hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(time, player);
 
         shapeRenderer = new ShapeRenderer();
     }
