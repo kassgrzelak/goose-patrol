@@ -82,7 +82,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         shapeRenderer = new ShapeRenderer();
 
-        itemManager = ItemManager.getGameItemManager(time, uiViewport, player, projectiles);
+        itemManager = ItemManager.getGameItemManager(time, mainViewport, player, projectiles, game.batch);
     }
 
     /**
@@ -298,7 +298,7 @@ public class GoosePatrolScreen extends GameScreen {
             enemy.draw();
 
         for (Projectile projectile : projectiles)
-            projectile.draw(game.batch);
+            projectile.draw();
 
         player.draw();
     }

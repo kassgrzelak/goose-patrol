@@ -66,10 +66,10 @@ public class ItemManager {
      * @param time The game's GameTime object.
      * @return The game's ItemManager.
      */
-    public static ItemManager getGameItemManager(GameTime time, Viewport viewport, Player player, ArrayList<Projectile> projectiles) {
+    public static ItemManager getGameItemManager(GameTime time, Viewport viewport, Player player, ArrayList<Projectile> projectiles, SpriteBatch batch) {
         ItemManager itemManager = new ItemManager();
 
-        itemManager.addItem(new BreadItem(time, viewport, player, projectiles));
+        itemManager.addItem(new BreadItem(time, viewport, player, projectiles, batch));
         itemManager.addItem(new BandageItem(player));
 
         return itemManager;
