@@ -30,7 +30,7 @@ public class MainMenuScreen extends GameScreen {
 
         if (Gdx.input.justTouched()) {
             if (startRect.contains(mousePosition))
-                game.setScreen(new GoosePatrolScreen(game));
+                game.setScreen(new MainScreen(game));
             else if (quitRect.contains(mousePosition))
                 Gdx.app.exit();
         }
