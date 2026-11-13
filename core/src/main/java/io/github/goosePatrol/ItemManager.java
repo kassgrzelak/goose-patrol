@@ -27,12 +27,13 @@ public class ItemManager {
 
     /**
      * Use the currently selected item.
+     * @return true if the item was used successfully, false otherwise.
      */
-    public void useSelected() {
+    public boolean useSelected() {
         if (items.isEmpty())
-            return;
+            return false;
 
-        items.get(selected).useIfPossible();
+        return items.get(selected).useIfPossible();
     }
 
     /**

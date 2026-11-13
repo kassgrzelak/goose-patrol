@@ -19,13 +19,14 @@ public abstract class CooldownItem extends Item {
     }
 
     @Override
-    public void useIfPossible() {
+    public boolean useIfPossible() {
         if (time.getTimeMillis() - lastUseTime < cooldownDurationMillis)
-            return;
+            return false;
 
         use();
 
         lastUseTime = time.getTimeMillis();
+        return true;
     }
 
     /**
