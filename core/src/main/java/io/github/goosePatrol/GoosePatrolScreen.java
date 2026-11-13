@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -44,6 +46,20 @@ public class GoosePatrolScreen extends GameScreen {
     private final HiddenEventManager hiddenEventManager;
     private final WaveManager waveManager;
 
+    private boolean paused = false;
+
+    private final ShapeRenderer shapeRenderer;
+
+    private Rectangle resumeRect = new Rectangle();
+    private Rectangle restartRect = new Rectangle();
+    private Rectangle mainMenuRect = new Rectangle();
+
+    private final GameTime time = new GameTime();
+
+    private final ItemManager itemManager;
+
+    private final ArrayList<Projectile> projectiles = new ArrayList<>();
+
     public GoosePatrolScreen(Main game) {
         super(game);
 
@@ -52,9 +68,9 @@ public class GoosePatrolScreen extends GameScreen {
         uiViewport = new ScreenViewport();
 
         enemies = new ArrayList<>();
-        waveManager = WaveManager.getGameWaveManager(game.batch, enemies);
+        waveManager = WaveManager.getGameWaveManager(game.batch, enemies, time);
 
-        player = new Player(game.batch);
+        player = new Player(game.batch, time);
 
         background = new Sprite(new Texture("bg.jpg"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
@@ -62,12 +78,11 @@ public class GoosePatrolScreen extends GameScreen {
 
         timeStarted = TimeUtils.millis();
 
-        ArrayList<HiddenEvent> events = new ArrayList<>();
+        hiddenEventManager = HiddenEventManager.getGameHiddenEventManager(time, player);
 
-        events.add(new EffectEvent(player, new SpeedEffect(3000, 0.5f), new Vector2(-2, -1), 0.5f));
-        events.add(new EffectEvent(player, new SpeedEffect(3000, -0.5f), new Vector2(-2, 1), 0.5f));
+        shapeRenderer = new ShapeRenderer();
 
-        hiddenEventManager = new HiddenEventManager(events);
+        itemManager = ItemManager.getGameItemManager(time, mainViewport, player, projectiles, game.batch);
     }
 
     /**
@@ -123,13 +138,48 @@ public class GoosePatrolScreen extends GameScreen {
         }
     }
 
+    @Override
+    public void pause() {
+        pauseGame();
+    }
+
+    /**
+     * Pause the game.
+     */
+    private void pauseGame() {
+        paused = true;
+    }
+
+    /**
+     * Unpause the game.
+     */
+    private void unpauseGame() {
+        paused = false;
+    }
+
+    /**
+     * Get whether the player is out of time or not.
+     * @return true if the player is out of time and the game is not paused.
+     */
+    private boolean outOfTime() {
+        return getTimeElapsed() > GAME_TIME_LIMIT_MILLIS && !paused;
+    }
+
+    /**
+     * Get the amount of time elapsed, accounting for time spent paused.
+     * @return The time remaining.
+     */
+    private long getTimeElapsed() {
+        return time.getTimeMillis() - timeStarted;
+    }
+
     /**
      * Set the game screen to the appropriate win/loss screen if a win/loss condition is met. Otherwise, do nothing.
      */
     private void checkWinLossConditions() {
         if (player.isUnconscious())
             gameLost = true;
-        if (TimeUtils.timeSinceMillis(timeStarted) > GAME_TIME_LIMIT_MILLIS)
+        if (outOfTime())
             gameWon = true;
         if (waveManager.isFinished() && enemies.isEmpty())
             gameWon = true;
@@ -140,8 +190,43 @@ public class GoosePatrolScreen extends GameScreen {
             game.setScreen(new WinScreen(game));
     }
 
+    private void checkProjectileCollisions() {
+        final ArrayList<Projectile> projectilesToDelete = new ArrayList<>();
+        final ArrayList<Enemy> enemiesToDelete = new ArrayList<>();
+
+        for (Projectile projectile : projectiles) {
+            if (projectile.isOutOfBounds()) {
+                projectilesToDelete.add(projectile);
+                continue;
+            }
+
+            for (Enemy enemy : enemies) {
+                if (projectile.getPosition().dst(enemy.getPosition()) < projectile.getRadius() + enemy.getRadius()) {
+                    enemy.takeDamage(projectile.damage);
+                    projectilesToDelete.add(projectile);
+
+                    if (enemy.isUnconscious())
+                        enemiesToDelete.add(enemy);
+                }
+            }
+        }
+
+        for (Projectile projectile : projectilesToDelete)
+            projectiles.remove(projectile);
+        for (Enemy enemy : enemiesToDelete)
+            enemies.remove(enemy);
+    }
+
     @Override
     protected void update(float delta) {
+        if (paused)
+            time.addTimePaused(delta);
+
+        handleInput(delta);
+
+        if (paused)
+            return;
+
         if (enemies.isEmpty())
             waveManager.forceNextWave();
         else
@@ -149,7 +234,8 @@ public class GoosePatrolScreen extends GameScreen {
 
         checkWinLossConditions();
 
-        handleInput(delta);
+        for (Projectile projectile : projectiles)
+            projectile.update(delta);
 
         player.update(delta);
         camera.update(delta, player.getPosition());
@@ -159,6 +245,7 @@ public class GoosePatrolScreen extends GameScreen {
 
         resolveCollisions();
         hiddenEventManager.checkEventCollision(player);
+        checkProjectileCollisions();
     }
 
     /**
@@ -166,8 +253,31 @@ public class GoosePatrolScreen extends GameScreen {
      * @param delta Time passed since the last frame, in seconds.
      */
     private void handleInput(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-            Gdx.app.exit(); // Temporary for testing.
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (paused)
+                unpauseGame();
+            else
+                pauseGame();
+        }
+
+        if (paused && Gdx.input.justTouched()) {
+            final Vector2 mousePosition = getMousePosition(uiViewport);
+
+            if (resumeRect.contains(mousePosition))
+                unpauseGame();
+            else if (restartRect.contains(mousePosition))
+                game.setScreen(new GoosePatrolScreen(game));
+            else if (mainMenuRect.contains(mousePosition))
+                game.setScreen(new MainMenuScreen(game));
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q))
+            itemManager.moveSelectedUp();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E))
+            itemManager.moveSelectedDown();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            itemManager.useSelected();
     }
 
     @Override
@@ -180,6 +290,7 @@ public class GoosePatrolScreen extends GameScreen {
         game.batch.end();
 
         hiddenEventManager.debugDrawEvents(camera.getCamera().combined);
+        drawPauseScreen();
     }
 
     /**
@@ -192,6 +303,9 @@ public class GoosePatrolScreen extends GameScreen {
 
         for (Enemy enemy : enemies)
             enemy.draw();
+
+        for (Projectile projectile : projectiles)
+            projectile.draw();
 
         player.draw();
     }
@@ -214,11 +328,55 @@ public class GoosePatrolScreen extends GameScreen {
      * Draw the timer UI.
      */
     private void drawTimer() {
-        final long timeElapsed = TimeUtils.timeSinceMillis(timeStarted) / 1000;
+        final long timeElapsed = getTimeElapsed() / 1000;
         final long minutes = timeElapsed / 60;
         final long seconds = timeElapsed % 60;
         final String timeString = String.format("%02d:%02d", minutes, seconds);
         game.font.draw(game.batch, timeString, 5, 60);
+    }
+
+    /**
+     * Draw the pause screen.
+     */
+    private void drawPauseScreen() {
+        if (!paused)
+            return;
+
+        shapeRenderer.setProjectionMatrix(uiViewport.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        shapeRenderer.setColor(GameConstants.BACKGROUND_COLOR);
+        shapeRenderer.rect(0, 0, uiViewport.getScreenWidth(), uiViewport.getScreenHeight());
+
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        resumeRect = getRectCentered(uiViewport, 0, 150, 400, 100);
+        drawRectangle(shapeRenderer, resumeRect);
+
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        restartRect = getRectCentered(uiViewport, 0, 0, 400, 100);
+        drawRectangle(shapeRenderer, restartRect);
+
+        shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
+        mainMenuRect = getRectCentered(uiViewport, 0, -150, 400, 100);
+        drawRectangle(shapeRenderer, mainMenuRect);
+
+        shapeRenderer.end();
+
+        game.batch.begin();
+
+        game.drawTextCentered(uiViewport, "Resume", 0, 150);
+        game.drawTextCentered(uiViewport, "Restart", 0, 0);
+        game.drawTextCentered(uiViewport, "Return to Main Menu", 0, -150);
+
+        game.batch.end();
+    }
+
+    private void drawEventsTriggered() {
+        game.font.draw(game.batch, "Events triggered: " + hiddenEventManager.getEventsTriggered(), 5, 90);
+    }
+
+    private void drawItems() {
+        itemManager.draw(game.batch);
     }
 
     /**
@@ -229,6 +387,8 @@ public class GoosePatrolScreen extends GameScreen {
 
         drawHealth();
         drawTimer();
+        drawEventsTriggered();
+        drawItems();
     }
 
     /**

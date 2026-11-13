@@ -6,10 +6,12 @@ import com.badlogic.gdx.utils.TimeUtils;
  * An abstract class representing some effect on the player.
  */
 public abstract class Effect {
+    protected final GameTime time;
     protected final long durationMillis;
     protected long endTime = -999999;
 
-    public Effect(long durationMillis) {
+    public Effect(GameTime time, long durationMillis) {
+        this.time = time;
         this.durationMillis = durationMillis;
     }
 
@@ -18,7 +20,7 @@ public abstract class Effect {
      * @param player The player to apply the effect onto.
      */
     public void apply(Player player) {
-        endTime = TimeUtils.millis() + durationMillis;
+        endTime = time.getTimeMillis() + durationMillis;
         applyEffect(player);
     }
 
@@ -34,7 +36,7 @@ public abstract class Effect {
      * @return true if the effect has worn off and been unapplied, or false if it has not.
      */
     public boolean unapplyIfWoreOff(Player player) {
-        if (TimeUtils.millis() < endTime)
+        if (time.getTimeMillis() < endTime)
             return false;
 
         unapplyEffect(player);

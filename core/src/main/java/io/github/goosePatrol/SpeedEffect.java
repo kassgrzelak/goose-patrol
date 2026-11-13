@@ -6,8 +6,8 @@ package io.github.goosePatrol;
 public class SpeedEffect extends Effect {
     private final float speedBoost;
 
-    public SpeedEffect(long durationMillis, float speedBoost) {
-        super(durationMillis);
+    public SpeedEffect(GameTime time, long durationMillis, float speedBoost) {
+        super(time, durationMillis);
         this.speedBoost = speedBoost;
     }
 

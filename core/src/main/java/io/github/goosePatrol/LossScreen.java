@@ -14,11 +14,10 @@ public class LossScreen extends GameScreen {
 
     @Override
     protected void update(float delta) {
-        ScreenUtils.clear(Color.RED);
     }
 
     @Override
     protected void draw() {
-
+        ScreenUtils.clear(Color.RED);
     }
 }

@@ -1,5 +1,9 @@
+bandage.png
 basic-goose.png
 bg.jpg
+bread.png
 libgdx.png
 map.jpg
 player.jpg
+player.png
+selectBox.png
