@@ -74,7 +74,7 @@ public class MainScreen extends GameScreen {
 
         player = new Player(game.batch, time);
 
-        background = new Sprite(new Texture("bg.jpg"));
+        background = new Sprite(new Texture("map.png"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
         background.setPosition(-WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
 
