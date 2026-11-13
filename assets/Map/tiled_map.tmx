@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="203">
+ <imagelayer id="4" name="campus tiled map">
+<image source="tiled_map.png" width="992" height="1058"/>
+
+ </imagelayer>
+</map>
