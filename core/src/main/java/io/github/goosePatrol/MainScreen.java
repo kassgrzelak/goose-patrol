@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * The main screen where the actual game is played.
  */
-public class GoosePatrolScreen extends GameScreen {
+public class MainScreen extends GameScreen {
     private static final float WORLD_WIDTH = 30;
     private static final float WORLD_HEIGHT = 30;
 
@@ -60,7 +60,7 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final ArrayList<Projectile> projectiles = new ArrayList<>();
 
-    public GoosePatrolScreen(Main game) {
+    public MainScreen(Main game) {
         super(game);
 
         mainViewport = new ExtendViewport(CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -266,7 +266,7 @@ public class GoosePatrolScreen extends GameScreen {
             if (resumeRect.contains(mousePosition))
                 unpauseGame();
             else if (restartRect.contains(mousePosition))
-                game.setScreen(new GoosePatrolScreen(game));
+                game.setScreen(new MainScreen(game));
             else if (mainMenuRect.contains(mousePosition))
                 game.setScreen(new MainMenuScreen(game));
         }
