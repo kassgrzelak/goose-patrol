@@ -11,13 +11,14 @@ public abstract class LimitedItem extends Item {
     }
 
     @Override
-    public void useIfPossible() {
+    public boolean useIfPossible() {
         if (remainingUses == 0)
-            return;
+            return false;
 
         use();
 
         remainingUses--;
+        return true;
     }
 
     /**
