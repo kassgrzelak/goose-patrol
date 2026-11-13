@@ -5,4 +5,5 @@ bread.png
 libgdx.png
 map.jpg
 player.jpg
+player.png
 selectBox.png

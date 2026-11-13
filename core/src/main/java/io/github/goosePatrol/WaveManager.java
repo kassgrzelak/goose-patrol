@@ -71,9 +71,16 @@ public class WaveManager {
         waves.add(new Wave(wave1, time, 5000));
 
         ArrayList<Enemy> wave2 = new ArrayList<>();
-        wave2.add(new BasicGoose(batch, new Vector2(-5, 5)));
-        wave2.add(new BasicGoose(batch, new Vector2(-5, -5)));
+        wave2.add(new FastGoose(batch, new Vector2(-5, 5)));
+        wave2.add(new FastGoose(batch, new Vector2(-5, -5)));
         waves.add(new Wave(wave2, time, 5000));
+
+        ArrayList<Enemy> wave3 = new ArrayList<>();
+        wave3.add(new BasicGoose(batch, new Vector2(5, 5)));
+        wave3.add(new BasicGoose(batch, new Vector2(5, -5)));
+        wave3.add(new BasicGoose(batch, new Vector2(-5, 5)));
+        wave3.add(new BasicGoose(batch, new Vector2(-5, -5)));
+        waves.add(new Wave(wave3, time, 5000));
 
         return new WaveManager(waves, enemies);
     }

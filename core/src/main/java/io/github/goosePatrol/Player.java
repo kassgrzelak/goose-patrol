@@ -49,7 +49,7 @@ public class Player extends SpriteEntity {
     private final ArrayList<Effect> activeEffects = new ArrayList<>();
 
     public Player(SpriteBatch batch, GameTime time) {
-        super(new Sprite(new Texture("player.jpg")), batch);
+        super(new Sprite(new Texture("player.png")), batch);
         sprite.setSize(1, 1);
         sprite.setPosition(-0.5f, -0.5f); // Player starts at (0,0), this centers them.
 

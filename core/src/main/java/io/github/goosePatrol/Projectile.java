@@ -22,4 +22,13 @@ public class Projectile extends SpriteEntity {
     public void update(float delta) {
         deltaPosition(velocity.cpy().scl(delta));
     }
+
+    /**
+     * Get whether the projectile is out of the world boundary.
+     * @return true if the projectile is outside the world boundary, false otherwise.
+     */
+    public boolean isOutOfBounds() {
+        return getX() < -GameConstants.WORLD_WIDTH / 2 || getX() > GameConstants.WORLD_WIDTH / 2
+                || getY() < -GameConstants.WORLD_HEIGHT / 2 || getY() > GameConstants.WORLD_HEIGHT / 2;
+    }
 }

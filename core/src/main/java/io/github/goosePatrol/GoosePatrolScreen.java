@@ -194,8 +194,13 @@ public class GoosePatrolScreen extends GameScreen {
         final ArrayList<Projectile> projectilesToDelete = new ArrayList<>();
         final ArrayList<Enemy> enemiesToDelete = new ArrayList<>();
 
-        for (Projectile projectile : projectiles)
-            for (Enemy enemy : enemies)
+        for (Projectile projectile : projectiles) {
+            if (projectile.isOutOfBounds()) {
+                projectilesToDelete.add(projectile);
+                continue;
+            }
+
+            for (Enemy enemy : enemies) {
                 if (projectile.getPosition().dst(enemy.getPosition()) < projectile.getRadius() + enemy.getRadius()) {
                     enemy.takeDamage(projectile.damage);
                     projectilesToDelete.add(projectile);
@@ -203,6 +208,8 @@ public class GoosePatrolScreen extends GameScreen {
                     if (enemy.isUnconscious())
                         enemiesToDelete.add(enemy);
                 }
+            }
+        }
 
         for (Projectile projectile : projectilesToDelete)
             projectiles.remove(projectile);
