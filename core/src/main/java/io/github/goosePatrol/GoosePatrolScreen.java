@@ -11,17 +11,20 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+
 import java.util.ArrayList;
 
 public class GoosePatrolScreen extends GameScreen {
-    private static final float WORLD_WIDTH = 30;
-    private static final float WORLD_HEIGHT = 30;
+    private static final float WORLD_WIDTH = GameConstants.WORLD_WIDTH;
+    private static final float WORLD_HEIGHT = GameConstants.WORLD_HEIGHT;
 
     private static final float CAMERA_ASPECT_RATIO = 9f / 16;
     private static final float CAMERA_WIDTH = 16;
     private static final float CAMERA_HEIGHT = CAMERA_WIDTH * CAMERA_ASPECT_RATIO;
-
     private static final long GAME_TIME_LIMIT = 5 * 60 * 1000;
+
+
+
 
     /**
      * A value between 0 and 1 that determines how easily the player pushes away enemies when colliding with them. Higher
@@ -44,7 +47,9 @@ public class GoosePatrolScreen extends GameScreen {
 
     private final Player player;
 
+
     private final Sprite background;
+
 
     private long timeStarted = 0;
 
@@ -64,10 +69,18 @@ public class GoosePatrolScreen extends GameScreen {
 
         player = new Player(game.batch);
 
-        background = new Sprite(new Texture("bg.jpg"));
+// Loads as  map image directly as a background sprite
+        // Load the campus map image and center it so (0,0) is in the middle of the world
+        background = new Sprite(new Texture("Map/tiled_map.png"));
         background.setSize(WORLD_WIDTH, WORLD_HEIGHT);
-        background.setPosition(-WORLD_WIDTH / 2, - WORLD_HEIGHT / 2);
+        background.setPosition(-WORLD_WIDTH / 2f, -WORLD_HEIGHT / 2f);
+
+
+
+
     }
+
+
 
     @Override
     public void show() {
@@ -177,8 +190,12 @@ public class GoosePatrolScreen extends GameScreen {
     /**
      * Draw world objects.
      */
+    /**
+     * Draw world objects.
+     */
     private void drawWorld() {
         useWorldCoordinates();
+
 
         background.draw(game.batch);
 
@@ -187,6 +204,16 @@ public class GoosePatrolScreen extends GameScreen {
 
         player.draw();
     }
+
+
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        background.getTexture().dispose();
+    }
+
+
 
     /**
      * Use world units for drawing rather than pixels.
