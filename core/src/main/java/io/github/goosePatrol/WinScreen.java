@@ -13,11 +13,10 @@ public class WinScreen extends GameScreen {
 
     @Override
     protected void update(float delta) {
-        ScreenUtils.clear(Color.GREEN);
     }
 
     @Override
     protected void draw() {
-
+        ScreenUtils.clear(Color.GREEN);
     }
 }

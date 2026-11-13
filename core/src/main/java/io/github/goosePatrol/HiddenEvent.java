@@ -32,14 +32,16 @@ public abstract class HiddenEvent {
 
     /**
      * Trigger the event. This does nothing if the event has already been triggered.
+     * @return true if the event was succcessfully triggered, false otherwise.
      */
-    public void trigger() {
+    public boolean trigger() {
         if (triggered)
-            return;
+            return false;
 
         onTrigger();
 
         triggered = true;
+        return true;
     }
 
     /**

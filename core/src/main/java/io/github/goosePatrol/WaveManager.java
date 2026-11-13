@@ -1,5 +1,6 @@
 package io.github.goosePatrol;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -61,18 +62,25 @@ public class WaveManager {
         return waves.isEmpty();
     }
 
-    public static WaveManager getGameWaveManager(SpriteBatch batch, ArrayList<Enemy> enemies) {
+    public static WaveManager getGameWaveManager(SpriteBatch batch, ArrayList<Enemy> enemies, GameTime time) {
         ArrayList<Wave> waves = new ArrayList<>();
 
         ArrayList<Enemy> wave1 = new ArrayList<>();
         wave1.add(new BasicGoose(batch, new Vector2(5, 5)));
         wave1.add(new BasicGoose(batch, new Vector2(5, -5)));
-        waves.add(new Wave(wave1, 5000));
+        waves.add(new Wave(wave1, time, 5000));
 
         ArrayList<Enemy> wave2 = new ArrayList<>();
-        wave2.add(new BasicGoose(batch, new Vector2(-5, 5)));
-        wave2.add(new BasicGoose(batch, new Vector2(-5, -5)));
-        waves.add(new Wave(wave2, 5000));
+        wave2.add(new FastGoose(batch, new Vector2(-5, 5)));
+        wave2.add(new FastGoose(batch, new Vector2(-5, -5)));
+        waves.add(new Wave(wave2, time, 5000));
+
+        ArrayList<Enemy> wave3 = new ArrayList<>();
+        wave3.add(new BasicGoose(batch, new Vector2(5, 5)));
+        wave3.add(new BasicGoose(batch, new Vector2(5, -5)));
+        wave3.add(new BasicGoose(batch, new Vector2(-5, 5)));
+        wave3.add(new BasicGoose(batch, new Vector2(-5, -5)));
+        waves.add(new Wave(wave3, time, 5000));
 
         return new WaveManager(waves, enemies);
     }

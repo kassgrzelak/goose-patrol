@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 
@@ -22,6 +21,7 @@ public class Player extends SpriteEntity {
 
     private final Vector2 velocity;
 
+    private final GameTime time;
     private long timeOfLastHit = -999999;
 
     private static final float PLAYER_SPEED = 5;
@@ -48,12 +48,14 @@ public class Player extends SpriteEntity {
 
     private final ArrayList<Effect> activeEffects = new ArrayList<>();
 
-    public Player(SpriteBatch batch) {
-        super(new Sprite(new Texture("player.jpg")), batch);
+    public Player(SpriteBatch batch, GameTime time) {
+        super(new Sprite(new Texture("player.png")), batch);
         sprite.setSize(1, 1);
         sprite.setPosition(-0.5f, -0.5f); // Player starts at (0,0), this centers them.
 
         velocity = new Vector2(0, 0);
+
+        this.time = time;
     }
 
     /**
@@ -125,7 +127,7 @@ public class Player extends SpriteEntity {
      * @return true if the hit cooldown period has passed, false otherwise.
      */
     private boolean canBeHit() {
-        return TimeUtils.timeSinceMillis(timeOfLastHit) > PLAYER_HIT_COOLDOWN_MILLIS;
+        return time.getTimeMillis() - timeOfLastHit > PLAYER_HIT_COOLDOWN_MILLIS;
     }
 
     /**
@@ -137,7 +139,16 @@ public class Player extends SpriteEntity {
             return;
 
         health -= damage;
-        timeOfLastHit = TimeUtils.millis();
+        timeOfLastHit = time.getTimeMillis();
+    }
+
+    /**
+     * Add health to the player. This method will not take the player's health above 100.
+     * @param amount The amount to heal by.
+     */
+    public void addHealth(int amount) {
+        health += amount;
+        health = MathUtils.clamp(health, 0, 100);
     }
 
     /**

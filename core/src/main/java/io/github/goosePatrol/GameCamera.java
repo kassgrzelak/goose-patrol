@@ -3,9 +3,6 @@ package io.github.goosePatrol;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 
-import static io.github.goosePatrol.GameConstants.WORLD_HEIGHT;
-import static io.github.goosePatrol.GameConstants.WORLD_WIDTH;
-
 /**
  * Class for the camera which follows the player.
  */
@@ -46,14 +43,14 @@ public class GameCamera {
         camera.position.add(velocity.x * delta, velocity.y * delta, 0);
 
         // Keep the camera within the world bounds.
-        if (camera.position.x < -WORLD_WIDTH / 2 + camera.viewportWidth / 2)
-            camera.position.x = -WORLD_WIDTH / 2 + camera.viewportWidth / 2;
-        if (camera.position.x > WORLD_WIDTH / 2 - camera.viewportWidth / 2)
-            camera.position.x = WORLD_WIDTH / 2 - camera.viewportWidth / 2;
-        if (camera.position.y < -WORLD_HEIGHT / 2 + camera.viewportHeight / 2)
-            camera.position.y = -WORLD_HEIGHT / 2 + camera.viewportHeight / 2;
-        if (camera.position.y > WORLD_HEIGHT / 2 - camera.viewportHeight / 2)
-            camera.position.y = WORLD_HEIGHT / 2 - camera.viewportHeight / 2;
+        if (camera.position.x < -GameConstants.WORLD_WIDTH / 2 + camera.viewportWidth / 2)
+            camera.position.x = -GameConstants.WORLD_WIDTH / 2 + camera.viewportWidth / 2;
+        if (camera.position.x > GameConstants.WORLD_WIDTH / 2 - camera.viewportWidth / 2)
+            camera.position.x = GameConstants.WORLD_WIDTH / 2 - camera.viewportWidth / 2;
+        if (camera.position.y < -GameConstants.WORLD_HEIGHT / 2 + camera.viewportHeight / 2)
+            camera.position.y = -GameConstants.WORLD_HEIGHT / 2 + camera.viewportHeight / 2;
+        if (camera.position.y > GameConstants.WORLD_HEIGHT / 2 - camera.viewportHeight / 2)
+            camera.position.y = GameConstants.WORLD_HEIGHT / 2 - camera.viewportHeight / 2;
 
         camera.update();
     }
