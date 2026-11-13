@@ -59,6 +59,8 @@ public class MainScreen extends GameScreen {
     private final ItemManager itemManager;
 
     private final ArrayList<Projectile> projectiles = new ArrayList<>();
+    
+    private int itemsUsed = 0;
 
     public MainScreen(Main game) {
         super(game);
@@ -277,7 +279,8 @@ public class MainScreen extends GameScreen {
             itemManager.moveSelectedDown();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            itemManager.useSelected();
+            if (itemManager.useSelected())
+                itemsUsed++;
     }
 
     @Override
@@ -375,6 +378,10 @@ public class MainScreen extends GameScreen {
         game.font.draw(game.batch, "Events triggered: " + hiddenEventManager.getEventsTriggered(), 5, 90);
     }
 
+    private void drawItemsUsed() {
+        game.font.draw(game.batch, "Items used: " + itemsUsed, 5, 120);
+    }
+
     private void drawItems() {
         itemManager.draw(game.batch);
     }
@@ -388,6 +395,7 @@ public class MainScreen extends GameScreen {
         drawHealth();
         drawTimer();
         drawEventsTriggered();
+        drawItemsUsed();
         drawItems();
     }
 
