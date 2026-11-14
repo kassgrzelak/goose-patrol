@@ -1,7 +1,6 @@
 bandage.png
-basic-goose.png
 bread.png
-libgdx.png
+goose.png
 map.png
 player.png
 selectBox.png
