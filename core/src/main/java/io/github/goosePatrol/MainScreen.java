@@ -46,7 +46,7 @@ public class MainScreen extends GameScreen {
     private final HiddenEventManager hiddenEventManager;
     private final WaveManager waveManager;
 
-    private boolean paused = false;
+    private boolean paused = true;
 
     private final ShapeRenderer shapeRenderer;
 
@@ -347,9 +347,6 @@ public class MainScreen extends GameScreen {
 
         shapeRenderer.setProjectionMatrix(uiViewport.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        shapeRenderer.setColor(GameConstants.BACKGROUND_COLOR);
-        shapeRenderer.rect(0, 0, uiViewport.getScreenWidth(), uiViewport.getScreenHeight());
 
         shapeRenderer.setColor(GameConstants.BUTTON_COLOR);
         resumeRect = getRectCentered(uiViewport, 0, 150, 400, 100);
