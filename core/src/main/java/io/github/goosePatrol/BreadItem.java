@@ -16,8 +16,11 @@ public class BreadItem extends CooldownItem {
     private final Texture projectileTexture;
     private final SpriteBatch batch;
 
+    private static final long BREAD_COOLDOWN_LONG = 200;
+    private static final float BREAD_SPEED = 7.0f;
+
     public BreadItem(GameTime time, Viewport viewport, Player player, ArrayList<Projectile> projectiles, SpriteBatch batch) {
-        super(new Texture("bread.png"), time, 500);
+        super(new Texture("bread.png"), time, BREAD_COOLDOWN_LONG);
         this.viewport = viewport;
         this.player = player;
         this.projectiles = projectiles;
@@ -29,7 +32,7 @@ public class BreadItem extends CooldownItem {
     protected void use() {
         final Vector2 mousePosition = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         final Vector2 projectileDir = mousePosition.cpy().sub(player.getPosition()).nor();
-        final Vector2 velocity = projectileDir.cpy().scl(3);
+        final Vector2 velocity = projectileDir.cpy().scl(BREAD_SPEED);
 
         final Sprite sprite = new Sprite(projectileTexture);
         sprite.setSize(0.5f, 0.5f);
