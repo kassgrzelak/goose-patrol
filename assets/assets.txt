@@ -1,5 +1,6 @@
 bandage.png
 bread.png
+controls.png
 goose.png
 map.png
 player.png

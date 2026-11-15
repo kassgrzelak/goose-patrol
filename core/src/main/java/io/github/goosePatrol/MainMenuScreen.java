@@ -1,6 +1,7 @@
 package io.github.goosePatrol;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class MainMenuScreen extends GameScreen {
     private final ScreenViewport viewport;
     private final ShapeRenderer shapeRenderer;
+    private final Texture controlsTexture;
 
     private Rectangle startRect = new Rectangle();
     private Rectangle quitRect = new Rectangle();
@@ -21,6 +23,7 @@ public class MainMenuScreen extends GameScreen {
         super(game);
         viewport = new ScreenViewport();
         shapeRenderer = new ShapeRenderer();
+        controlsTexture = new Texture("controls.png");
     }
 
     @Override
@@ -55,13 +58,24 @@ public class MainMenuScreen extends GameScreen {
 
         game.batch.setProjectionMatrix(viewport.getCamera().combined);
         game.batch.begin();
+
         game.drawTextCentered(viewport, "Start", 0, 100);
         game.drawTextCentered(viewport, "Quit", 0, -100);
+
+        final Rectangle controlsRect = new Rectangle(50, 50, 400, 200);
+        game.batch.draw(controlsTexture, controlsRect.x, controlsRect.y, controlsRect.width, controlsRect.height);
+
         game.batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+    }
+
+    @Override
+    public void dispose() {
+        shapeRenderer.dispose();
+        controlsTexture.dispose();
     }
 }
