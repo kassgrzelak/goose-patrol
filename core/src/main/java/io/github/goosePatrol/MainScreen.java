@@ -292,8 +292,15 @@ public class MainScreen extends GameScreen {
         drawUI();
         game.batch.end();
 
+        drawItemCooldownBars();
+
         hiddenEventManager.debugDrawEvents(camera.getCamera().combined);
         drawPauseScreen();
+    }
+
+    private void drawItemCooldownBars() {
+        shapeRenderer.setProjectionMatrix(uiViewport.getCamera().combined);
+        itemManager.drawCooldownBars(shapeRenderer);
     }
 
     /**
@@ -380,7 +387,7 @@ public class MainScreen extends GameScreen {
     }
 
     private void drawItems() {
-        itemManager.draw(game.batch);
+        itemManager.draw(game.batch, game.font);
     }
 
     /**
